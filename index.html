@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App de Bebidas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+        .snap-x {
+            scroll-snap-type: x mandatory;
+        }
+        .snap-center {
+            scroll-snap-align: center;
+        }
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div id="app-container" class="max-w-md mx-auto bg-white min-h-screen shadow-lg">
+
+        <!-- TELA INICIAL -->
+        <div id="home-screen" class="screen active">
+            <header class="p-4 bg-black text-white">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center font-bold text-black text-2xl mr-3">
+                        B
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400"> Seja bem vindo . </p>
+                        <p class="font-semibold"> Yoshi's Beer. Tudo que você precisa em poucos cliks.</p>
+                    </div>
+                </div>
+                <div class="mt-4 relative">
+                    <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input id="home-search" type="text" placeholder="Pesquise sua bebida favorita" class="w-full bg-gray-800 border border-gray-700 rounded-lg py-2 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                </div>
+            </header>
+
+            <div id="home-main-content">
+                <main class="p-4">
+                    <!-- Banner -->
+                    <div id="banner-scroll" class="overflow-x-auto snap-x flex space-x-4 no-scrollbar">
+                        <div class="flex-shrink-0 w-full rounded-lg snap-center">
+                            <img src="https://cervejaitaipava.com.br/wp-content/uploads/2024/06/CERVE2145-PG008_ITAIPAVA_KV_PROMO_TAMPINHA_FAMILIA_ITAIPAVA_HORIZONTAL_RGB_NOVA-2048x1152.jpg" alt="Banner de promoção" class="w-full h-auto object-cover rounded-lg">
+                        </div>
+                        <div class="flex-shrink-0 w-full rounded-lg snap-center">
+                            <img src="https://content.paodeacucar.com/wp-content/uploads/2018/03/21_VINHOS_LIQUIDA_SDC_tv_flash_15.jpg" alt="Banner de vinhos" class="w-full h-auto object-cover rounded-lg">
+                        </div>
+                    </div>
+
+                    <!-- Categorias -->
+                    <div class="grid grid-cols-2 gap-3 mt-6">
+                        <button onclick="showCategory('cervejas')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left">
+                            <i class="fa fa-beer-mug-empty text-xl text-gray-600 mr-3"></i>
+                            <span class="font-semibold">Cervejas</span>
+                        </button>
+                        <button onclick="showCategory('destilados')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left">
+                            <i class="fa fa-martini-glass-citrus text-xl text-gray-600 mr-3"></i>
+                            <span class="font-semibold">Destilados</span>
+                        </button>
+                        <button onclick="showCategory('vinhos')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left">
+                            <i class="fa fa-wine-glass text-xl text-gray-600 mr-3"></i>
+                            <span class="font-semibold">Vinhos</span>
+                        </button>
+                        <button onclick="showCategory('sem-alcool')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left">
+                            <i class="fa fa-bottle-droplet text-xl text-gray-600 mr-3"></i>
+                            <span class="font-semibold">Sem Álcool</span>
+                        </button>
+                        <button onclick="showCategory('lojinha')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left">
+                            <i class="fa fa-store text-xl text-gray-600 mr-3"></i>
+                            <span class="font-semibold">Lojinha</span>
+                        </button>
+                        <button onclick="showCategory('comidinhas')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left">
+                            <i class="fa fa-utensils text-xl text-gray-600 mr-3"></i>
+                            <span class="font-semibold">Comidinhas</span>
+                        </button>
+                    </div>
+
+                    <!-- Populares -->
+                    <section class="mt-8">
+                        <h2 class="font-bold text-lg">Populares</h2>
+                        <div id="popular-items" class="flex overflow-x-auto gap-4 mt-4 no-scrollbar pb-2">
+                            <!-- Itens populares serão inseridos aqui pelo JS -->
+                        </div>
+                    </section>
+                </main>
+            </div>
+            <div id="home-search-results" class="hidden p-4"></div>
+        </div>
+
+        <!-- TELA DE CATEGORIA -->
+        <div id="category-screen" class="screen">
+            <header class="p-4 border-b flex items-center sticky top-0 bg-white z-20">
+                <button onclick="goBack()" class="mr-4"><i class="fa fa-arrow-left text-xl"></i></button>
+                <div class="relative flex-1">
+                    <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input id="category-search" type="text" placeholder="Pesquise sua bebida favorita" class="w-full bg-gray-100 border border-gray-300 rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                </div>
+            </header>
+            <div id="category-content-wrapper">
+                <div id="category-main-content">
+                    <!-- Conteúdo da categoria gerado por JS -->
+                </div>
+                <div id="category-search-results" class="hidden p-4"></div>
+            </div>
+        </div>
+        
+        <!-- TELA DE PRODUTO -->
+        <div id="product-screen" class="screen">
+             <header class="p-4 border-b flex items-center justify-between sticky top-0 bg-white z-10">
+                <button onclick="goBack()"><i class="fa fa-arrow-left text-xl"></i></button>
+                <div class="text-blue-500 font-semibold">
+                    <i class="fa fa-snowflake"></i> GELADA
+                </div>
+            </header>
+            <main class="p-4" id="product-details">
+                <!-- Detalhes do produto serão inseridos aqui -->
+            </main>
+            <footer class="p-4 border-t sticky bottom-0 bg-white" id="product-footer">
+                <!-- Footer do produto será inserido aqui -->
+            </footer>
+        </div>
+
+        <!-- TELA DO CARRINHO -->
+        <div id="cart-screen" class="screen">
+            <header class="p-4 border-b flex items-center sticky top-0 bg-white">
+                <button onclick="goBack()"><i class="fa fa-arrow-left text-xl"></i></button>
+                <h2 class="font-bold text-lg mx-auto">SACOLA</h2>
+                <button onclick="clearCart()"><i class="fa fa-trash-alt text-xl text-red-500"></i></button>
+            </header>
+            <main class="p-4 pb-48">
+                <div id="cart-items" class="space-y-4">
+                    <!-- Itens do carrinho serão inseridos aqui -->
+                </div>
+                <div id="empty-cart-message" class="hidden text-center py-16">
+                    <i class="fa fa-shopping-basket text-5xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-500">Sua sacola está vazia.</p>
+                </div>
+
+                <div class="mt-6 space-y-3">
+                    <button onclick="navigateTo('home-screen')" class="w-full text-left p-3 rounded-lg border flex justify-between items-center">
+                        <span>Adicionar mais produtos</span>
+                        <i class="fa fa-plus"></i>
+                    </button>
+                    <div id="coupon-area">
+                        <button id="show-coupon-btn" onclick="showCouponInput()" class="w-full text-left p-3 rounded-lg border flex justify-between items-center">
+                            <span>Adicionar cupom de desconto</span>
+                            <i class="fa fa-tag"></i>
+                        </button>
+                        <div id="coupon-input-container" class="hidden mt-2 flex gap-2">
+                            <input type="text" id="coupon-input" placeholder="Digite o código do cupom" class="flex-grow w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 uppercase">
+                            <button onclick="applyCoupon()" class="bg-gray-800 text-white font-semibold px-4 rounded-lg">Aplicar</button>
+                        </div>
+                        <div id="applied-coupon-info" class="hidden mt-2 text-left p-3 rounded-lg border bg-green-50 border-green-200 flex justify-between items-center">
+                            <!-- Info about applied coupon will go here -->
+                        </div>
+                    </div>
+                    <div>
+                        <label for="instructions" class="font-semibold text-sm">Instruções para o distribuidor?</label>
+                        <textarea id="instructions" rows="3" placeholder="Ex: Se possível, entregar buds em temperatura ambiente. O interfone está quebrado, favor ligar quando chegar." class="w-full mt-1 border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"></textarea>
+                    </div>
+                </div>
+
+            </main>
+            <footer class="p-4 border-t fixed bottom-0 bg-white w-full max-w-md mx-auto">
+                 <div id="cart-summary" class="hidden">
+                    <div class="flex justify-between text-gray-600">
+                        <span id="cart-summary-quantity"></span>
+                        <span id="cart-summary-subtotal"></span>
+                    </div>
+                     <div id="discount-summary" class="hidden justify-between text-green-600 font-semibold">
+                        <span>Desconto</span>
+                        <span id="discount-amount"></span>
+                    </div>
+                    <div class="flex justify-between text-gray-600">
+                        <span>Frete</span>
+                        <span id="frete-value"></span>
+                    </div>
+                    <div class="flex justify-between font-bold text-lg mt-2">
+                        <span>Total a pagar</span>
+                        <span id="cart-summary-total"></span>
+                    </div>
+                    <button onclick="navigateTo('payment-screen')" class="w-full bg-yellow-400 text-black font-bold py-3 rounded-lg mt-4">SELECIONAR FORMA DE PAGAMENTO</button>
+                </div>
+                <div class="text-center text-xs text-gray-500 mt-2">
+                    <p>Venda proibida para menores de 18 anos.</p>
+                </div>
+            </footer>
+        </div>
+
+        <!-- TELA DE PAGAMENTO -->
+        <div id="payment-screen" class="screen">
+            <header class="p-4 border-b flex items-center sticky top-0 bg-white">
+                <button onclick="goBack()"><i class="fa fa-arrow-left text-xl"></i></button>
+                <h2 class="font-bold text-lg mx-auto">FORMA DE PAGAMENTO</h2>
+                <div class="w-6"></div>
+            </header>
+            <main class="p-4">
+                <h3 class="font-bold text-gray-500 text-sm mb-3">PAGAMENTO NA ENTREGA</h3>
+                <div class="space-y-3">
+                    <div class="border rounded-lg p-3 flex justify-between items-center cursor-pointer" id="payment-pix" onclick="selectPayment('pix')">
+                        <div>
+                            <i class="fa-brands fa-pix mr-2"></i>
+                            <span>PIX</span>
+                        </div>
+                        <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                            <div class="w-3 h-3 rounded-full bg-green-500 hidden"></div>
+                        </div>
+                    </div>
+                    <div class="border rounded-lg p-3 flex justify-between items-center cursor-pointer" id="payment-cash" onclick="selectPayment('cash')">
+                         <div>
+                            <i class="fa fa-money-bill-wave mr-2"></i>
+                            <span>Dinheiro</span>
+                        </div>
+                        <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                            <div class="w-3 h-3 rounded-full bg-green-500 hidden"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pix-details" class="mt-4 hidden">
+                    <div class="bg-gray-100 p-4 rounded-lg text-center">
+                        <p class="font-semibold">Pague com PIX</p>
+                        <p class="text-sm mt-2"><strong>Chave PIX (CNPJ):</strong><br> 00.123.456/0001-00</p>
+                        <p class="text-sm mt-1"><strong>Nome:</strong> Distribuidora de Bebidas LTDA</p>
+                        <p class="text-sm mt-1"><strong>Banco:</strong> Banco Exemplo S.A.</p>
+                    </div>
+                    <p class="text-center text-sm font-semibold text-red-600 mt-3">Apos o pagamento do pix clicar em finalizar a compra.</p>
+                </div>
+
+                <div id="cash-details" class="mt-4 hidden">
+                    <p class="font-semibold">Valor do seu pedido: <span id="payment-total"></span></p>
+                    <div class="mt-2">
+                        <label for="change" class="block text-sm text-gray-700">Precisa de troco para quanto?</label>
+                        <input type="number" id="change" class="w-full mt-1 border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Ex: 50,00">
+                    </div>
+                    <div class="mt-3 flex items-center">
+                        <input type="checkbox" id="no-change" class="h-4 w-4 rounded border-gray-300 text-yellow-400 focus:ring-yellow-400">
+                        <label for="no-change" class="ml-2 block text-sm text-gray-900">Não preciso de troco</label>
+                    </div>
+                </div>
+
+                <div class="bg-gray-100 p-3 rounded-lg mt-6">
+                    <p class="font-bold text-sm">Por precaução:</p>
+                    <p class="text-sm text-gray-600 mt-1">Evite o pagamento com dinheiro em espécie. Tenha o troco para você e para o entregador.</p>
+                </div>
+            </main>
+            <footer class="p-4 border-t sticky bottom-0 bg-white">
+                 <button onclick="finalizeOrder()" class="w-full bg-yellow-400 text-black font-bold py-3 rounded-lg">FINALIZAR COMPRA</button>
+            </footer>
+        </div>
+
+    </div>
+
+    <script>
+        const products = {
+            // Cervejas
+            'stella-350ml': { id: 'stella-350ml', name: 'Stella Artois 350ml', price: 4.19, image: 'https://io.convertiez.com.br/m/superpaguemenos/shop/products/images/37597/large/cerveja-stella-artois-premium-lager-350ml_87345.png', category: 'cervejas', brand: 'Stella Artois' },
+            'stella-pack-24': { id: 'stella-pack-24', name: 'Stella Artois 350ml - Pack de 24', price: 95.53, image: 'https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fproduc_variant%2F00016732_f3a25215-7938-4287-96a0-33848d5f029d.jpg%3Fauto%3Dcompress%2Cformat%26fit%3Dmax%26w%3D540%26h%3D540%26dpr%3D2&w=1920&q=75', category: 'cervejas', brand: 'Stella Artois' },
+            'heineken-longneck': { id: 'heineken-longneck', name: 'Heineken 330ml Long Neck', price: 5.49, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/192280291/78936683_1_2_1200_72_RGB.png.png?v=638832650739330000', category: 'cervejas', brand: 'Heineken' },
+            'brahma-350ml': { id: 'brahma-350ml', name: 'Brahma Duplo Malte 350ml', price: 3.29, image: 'https://io.convertiez.com.br/m/superpaguemenos/shop/products/images/21304/large/cerveja-brahma-duplo-malte-lata-350ml_15379.png', category: 'cervejas', brand: 'Brahma' },
+            'skol-350ml': { id: 'skol-350ml', name: 'Skol Pilsen 350ml', price: 2.99, image: 'https://io.convertiez.com.br/m/superpaguemenos/shop/products/images/21319/large/cerveja-skol-pilsen-lata-350ml_15392.png', category: 'cervejas', brand: 'Skol' },
+            'antarctica-350ml': { id: 'antarctica-350ml', name: 'Antarctica Pilsen 350ml', price: 2.99, image: 'https://static.paodeacucar.com/img/uploads/1/657/24362657.png', category: 'cervejas', brand: 'Antarctica' },
+            'corona-330ml': { id: 'corona-330ml', name: 'Corona Extra 330ml', price: 6.49, image: 'https://static.paodeacucar.com/img/uploads/1/789/24364789.png', category: 'cervejas', brand: 'Corona' },
+            'bohemia-350ml': { id: 'bohemia-350ml', name: 'Bohemia Pilsen 350ml', price: 3.49, image: 'https://static.clubeextra.com.br/img/uploads/1/336/23533336.png', category: 'cervejas', brand: 'Bohemia' },
+            // Destilados
+            'jack-daniels': { id: 'jack-daniels', name: 'Whisky Jack Daniel\'s 1L', price: 139.90, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/194169484/186368_1.jpg?v=638894060439630000', category: 'destilados', brand: 'Jack Daniel\'s' },
+            'absolut-vodka': { id: 'absolut-vodka', name: 'Vodka Absolut 750ml', price: 79.90, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/181409148/vodka-absolut---750-ml-1.jpg?v=638695236921630000', category: 'destilados', brand: 'Absolut' },
+            // Vinhos
+            'casillero-diablo': { id: 'casillero-diablo', name: 'Vinho Casillero del Diablo 750ml', price: 49.99, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/24037655/1167936_1.jpg?v=637697238367330000', category: 'vinhos', brand: 'Casillero del Diablo' },
+            // Sem Alcool
+            'coca-cola-2l': { id: 'coca-cola-2l', name: 'Coca-Cola 2L', price: 9.50, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/118271106/refrigerante-coca-cola-garrafa-2-l-1.jpg?v=638217385053270000', category: 'sem-alcool', brand: 'Coca-Cola' },
+            'guarana-2l': { id: 'guarana-2l', name: 'Guaraná Antarctica 2L', price: 7.50, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/106437032/refrigerante-guarana-antarctica-garrafa-2l-1.jpg?v=638144885863600000', category: 'sem-alcool', brand: 'Guaraná Antarctica' },
+            // Lojinha
+            'carvao-5kg': { id: 'carvao-5kg', name: 'Carvão 5kg', price: 22.00, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/82786581/carvao-perola-negra-briquete-25-kg-1.jpg?v=638018887415400000', category: 'lojinha', brand: 'Genérico' },
+            // Comidinhas
+            'doritos-140g': { id: 'doritos-140g', name: 'Doritos Queijo Nacho 140g', price: 10.99, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/193842562/salgadinho-queijo-nacho-doritos-120g-1.jpg?v=638876002921530000', category: 'comidinhas', brand: 'Doritos' }
+        };
+
+        // --- GERENCIE SEUS CUPONS AQUI ---
+        const coupons = {
+            'BEBIDA10': 0.10, // 10% de desconto
+            'FESTA20': 0.20,   // 20% de desconto
+            'QUINTA30': 0.30, // 30% de desconto
+            'TOP50': 0.50     // 50% de desconto
+        };
+
+        let cart = [];
+        let navigationStack = ['home-screen'];
+        let paymentMethod = null;
+        let couponApplied = false;
+        let discountPercentage = 0;
+        let appliedCouponCode = '';
+        let currentCategory = null;
+        const FRETE = 1.00;
+        const WHATSAPP_NUMBER = '5543984399533'; // <-- SUBSTITUA PELO NÚMERO DO FORNECEDOR
+
+        function navigateTo(screenId) {
+            // Reset search states when navigating
+            const homeSearchInput = document.getElementById('home-search');
+            if (homeSearchInput) {
+                homeSearchInput.value = '';
+                handleSearch('', 'home-search-results', 'home-main-content');
+            }
+            const categorySearchInput = document.getElementById('category-search');
+            if(categorySearchInput){
+                 categorySearchInput.value = '';
+                handleSearch('', 'category-search-results', 'category-main-content', 'category');
+            }
+            
+            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            
+            if (navigationStack[navigationStack.length - 1] !== screenId) {
+                navigationStack.push(screenId);
+            }
+            window.scrollTo(0, 0);
+        }
+
+        function goBack() {
+            if (navigationStack.length > 1) {
+                navigationStack.pop();
+                const lastScreen = navigationStack[navigationStack.length - 1];
+                document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+                document.getElementById(lastScreen).classList.add('active');
+                 window.scrollTo(0, 0);
+            }
+        }
+
+        function renderPopularItems() {
+            const container = document.getElementById('popular-items');
+            container.innerHTML = '';
+            Object.keys(products).forEach(productId => {
+                const product = products[productId];
+                container.innerHTML += `
+                    <div class="text-center w-28 flex-shrink-0 cursor-pointer" onclick="showProduct('${productId}')">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-24 object-contain rounded-lg bg-gray-100 p-2">
+                        <p class="text-xs font-semibold mt-2 truncate">${product.name}</p>
+                        <p class="text-sm font-bold">R$ ${product.price.toFixed(2).replace('.', ',')}</p>
+                    </div>
+                `;
+            });
+        }
+        
+        function showCategory(category) {
+            currentCategory = category;
+            const mainContent = document.getElementById('category-main-content');
+            let contentHTML = '<main class="p-4">';
+
+            const filteredProducts = Object.values(products).filter(p => p.category === category);
+
+            const categoryTitle = category.charAt(0).toUpperCase() + category.slice(1).replace('-',' ');
+            contentHTML += `<h2 class="font-bold text-lg mb-4">${categoryTitle}</h2>`
+
+            // Special content for 'cervejas'
+            if (category === 'cervejas') {
+                contentHTML += `
+                     <h3 class="font-bold text-gray-500 text-sm mb-3">AS CONSAGRADAS</h3>
+                     <div class="grid grid-cols-3 gap-4 mb-8">
+                        <div onclick="filterBrand('Brahma')" data-brand="Brahma" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fbrahma-2.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75" class="max-h-12 object-contain" alt="Brahma"></div>
+                        <div onclick="filterBrand('Skol')" data-brand="Skol" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fskol-min.jpg%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2&w=256&q=75" class="max-h-16 object-contain" alt="Skol"></div>
+                        <div onclick="filterBrand('Antarctica')" data-brand="Antarctica" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fantarctica.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75" class="max-h-12 object-contain" alt="Antarctica"></div>
+                        <div onclick="filterBrand('Original')" data-brand="Original" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Foriginal.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75" class="max-h-12 object-contain" alt="Original"></div>
+                     </div>
+                     <h3 class="font-bold text-gray-500 text-sm mb-3">AS PRESTIGIADAS</h3>
+                     <div class="grid grid-cols-3 gap-4 mb-8">
+                        <div onclick="filterBrand('Stella Artois')" data-brand="Stella Artois" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fstella-artois-2.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75" class="max-h-16 object-contain" alt="Stella Artois"></div>
+                        <div onclick="filterBrand('Bohemia')" data-brand="Bohemia" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fbecks.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75" class="max-h-10 object-contain" alt="Bohemia"></div>
+                        <div onclick="filterBrand('Corona')" data-brand="Corona" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fcorona-wsl.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75" class="max-h-12 object-contain" alt="Corona"></div>
+                        <div onclick="filterBrand('Corona')" data-brand="Corona" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fbudweiser2.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75" class="max-h-12 object-contain" alt="Corona"></div>
+                     </div>
+                     <h3 onclick="filterBrand('all')" class="font-bold text-gray-500 text-sm mb-3 cursor-pointer hover:text-yellow-500 transition-all">TODAS AS CERVEJAS <i class="fa fa-sync-alt ml-1"></i></h3>
+                `;
+            }
+
+            contentHTML += '<div class="grid grid-cols-2 gap-4" id="category-products-grid">';
+
+            if (filteredProducts.length > 0) {
+                filteredProducts.forEach(product => {
+                    contentHTML += `
+                         <div onclick="showProduct('${product.id}')" class="cursor-pointer product-card" data-brand="${product.brand}">
+                            <div class="bg-gray-100 rounded-lg p-2 flex items-center justify-center h-32">
+                                <img src="${product.image}" alt="${product.name}" class="max-h-full max-w-full object-contain">
+                            </div>
+                            <p class="font-semibold text-sm mt-2">${product.name}</p>
+                            <p class="font-bold text-gray-800">R$ ${product.price.toFixed(2).replace('.', ',')}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                contentHTML += `<p class="col-span-2 text-center text-gray-500 py-10">Nenhum produto encontrado nesta categoria.</p>`;
+            }
+            
+            contentHTML += '</div></main>';
+            mainContent.innerHTML = contentHTML;
+            
+            navigateTo('category-screen');
+        }
+        
+        function showProduct(productId) {
+            const product = products[productId];
+            const detailsContainer = document.getElementById('product-details');
+            const footerContainer = document.getElementById('product-footer');
+            
+            detailsContainer.innerHTML = `
+                <div class="flex justify-center mb-4">
+                    <img src="${product.image}" alt="${product.name}" class="w-48 h-48 object-contain">
+                </div>
+                <h2 class="text-2xl font-bold">${product.name}</h2>
+                <p class="text-3xl font-bold my-4">R$ ${product.price.toFixed(2).replace('.', ',')}</p>
+                <div class="flex items-center justify-between bg-gray-100 rounded-lg p-2">
+                    <button onclick="updateProductQuantity('${productId}', -1)" class="w-10 h-10 text-2xl font-bold text-yellow-500">-</button>
+                    <span id="product-quantity-${productId}" class="text-2xl font-bold">1</span>
+                    <button onclick="updateProductQuantity('${productId}', 1)" class="w-10 h-10 text-2xl font-bold text-yellow-500">+</button>
+                </div>
+                <div class="grid grid-cols-3 gap-2 mt-4">
+                    <button onclick="updateProductQuantity('${productId}', 6, true)" class="bg-yellow-100 text-yellow-800 font-semibold py-2 rounded-lg">+ 6 un.</button>
+                    <button onclick="updateProductQuantity('${productId}', 12, true)" class="bg-yellow-100 text-yellow-800 font-semibold py-2 rounded-lg">+ 12 un.</button>
+                    <button onclick="updateProductQuantity('${productId}', 15, true)" class="bg-yellow-100 text-yellow-800 font-semibold py-2 rounded-lg">+ 15 un.</button>
+                </div>
+            `;
+            
+            footerContainer.innerHTML = `<button id="add-to-cart-btn-${productId}" onclick="addToCart('${productId}')" class="w-full bg-yellow-400 text-black font-bold py-3 rounded-lg flex justify-between items-center px-4">
+                    <span>ADICIONAR</span>
+                    <span id="product-subtotal-${productId}">R$ ${product.price.toFixed(2).replace('.', ',')}</span>
+                </button>`;
+
+            navigateTo('product-screen');
+        }
+
+        function updateProductQuantity(productId, change, absolute = false) {
+            const quantityEl = document.getElementById(`product-quantity-${productId}`);
+            let currentQuantity = parseInt(quantityEl.textContent);
+            
+            if (absolute) {
+                currentQuantity = change;
+            } else {
+                currentQuantity += change;
+            }
+
+            if (currentQuantity < 1) currentQuantity = 1;
+            
+            quantityEl.textContent = currentQuantity;
+            updateProductSubtotal(productId, currentQuantity);
+        }
+        
+        function updateProductSubtotal(productId, quantity) {
+            const product = products[productId];
+            const subtotalEl = document.getElementById(`product-subtotal-${productId}`);
+            const subtotal = product.price * quantity;
+            subtotalEl.textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+        }
+
+        function addToCart(productId) {
+            const quantity = parseInt(document.getElementById(`product-quantity-${productId}`).textContent);
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({ id: productId, quantity: quantity });
+            }
+            
+            renderCart();
+            navigateTo('cart-screen');
+        }
+
+        function updateCartItemQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(cartItem => cartItem.id !== productId);
+                }
+            }
+            renderCart();
+        }
+
+        function showCouponInput() {
+            document.getElementById('show-coupon-btn').classList.add('hidden');
+            document.getElementById('coupon-input-container').classList.remove('hidden');
+        }
+
+        function applyCoupon() {
+            if (couponApplied) {
+                alert('Um cupom já foi aplicado.');
+                return;
+            }
+            if (cart.length === 0) {
+                alert('Adicione itens ao carrinho para aplicar um cupom.');
+                return;
+            }
+
+            const input = document.getElementById('coupon-input');
+            const code = input.value.toUpperCase().trim();
+
+            if (coupons[code]) {
+                couponApplied = true;
+                discountPercentage = coupons[code];
+                appliedCouponCode = code;
+
+                document.getElementById('coupon-input-container').classList.add('hidden');
+                const appliedInfo = document.getElementById('applied-coupon-info');
+                appliedInfo.innerHTML = `
+                    <span>Cupom: ${appliedCouponCode}</span>
+                    <span class="text-green-600 font-bold">-${discountPercentage * 100}%</span>
+                `;
+                appliedInfo.classList.remove('hidden');
+
+                renderCart();
+            } else {
+                alert('Cupom inválido ou expirado.');
+            }
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            const summaryContainer = document.getElementById('cart-summary');
+            const emptyMessage = document.getElementById('empty-cart-message');
+
+            container.innerHTML = '';
+            
+            if (cart.length === 0) {
+                summaryContainer.classList.add('hidden');
+                emptyMessage.classList.remove('hidden');
+                return;
+            }
+
+            summaryContainer.classList.remove('hidden');
+            emptyMessage.classList.add('hidden');
+            
+            let subtotal = 0;
+            let totalQuantity = 0;
+
+            cart.forEach(item => {
+                const product = products[item.id];
+                subtotal += product.price * item.quantity;
+                totalQuantity += item.quantity;
+                container.innerHTML += `
+                     <div class="flex items-center">
+                        <img src="${product.image}" alt="${product.name}" class="w-16 h-16 object-contain rounded-lg bg-gray-100 p-1 mr-4">
+                        <div class="flex-1">
+                            <p class="font-semibold">${product.name}</p>
+                            <p class="text-gray-500">R$ ${product.price.toFixed(2).replace('.', ',')}</p>
+                        </div>
+                        <div class="flex items-center justify-between bg-gray-100 rounded-lg p-1">
+                            <button onclick="updateCartItemQuantity('${item.id}', -1)" class="w-8 h-8 text-xl font-bold text-yellow-500">-</button>
+                            <span class="text-lg font-bold mx-2">${item.quantity}</span>
+                            <button onclick="updateCartItemQuantity('${item.id}', 1)" class="w-8 h-8 text-xl font-bold text-yellow-500">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            const discountSummaryEl = document.getElementById('discount-summary');
+            const discountAmountEl = document.getElementById('discount-amount');
+            let discountAmount = 0;
+
+            if (couponApplied) {
+                discountAmount = subtotal * discountPercentage;
+                discountSummaryEl.classList.remove('hidden');
+                discountSummaryEl.classList.add('flex');
+                discountAmountEl.textContent = `- R$ ${discountAmount.toFixed(2).replace('.', ',')}`;
+            } else {
+                discountSummaryEl.classList.add('hidden');
+            }
+            
+            const total = subtotal - discountAmount + FRETE;
+
+            document.getElementById('cart-summary-quantity').textContent = `${totalQuantity} ${totalQuantity > 1 ? 'produtos' : 'produto'}`;
+            document.getElementById('cart-summary-subtotal').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+            document.getElementById('frete-value').textContent = `R$ ${FRETE.toFixed(2).replace('.', ',')}`;
+            document.getElementById('cart-summary-total').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            document.getElementById('payment-total').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+        
+        function clearCart() {
+            cart = [];
+            couponApplied = false;
+            discountPercentage = 0;
+            appliedCouponCode = '';
+
+            // Reset coupon UI
+            document.getElementById('show-coupon-btn').classList.remove('hidden');
+            document.getElementById('coupon-input-container').classList.add('hidden');
+            document.getElementById('coupon-input').value = '';
+            document.getElementById('applied-coupon-info').classList.add('hidden');
+
+            renderCart();
+        }
+
+        function selectPayment(method) {
+            paymentMethod = method;
+            const pixEl = document.getElementById('payment-pix');
+            const cashEl = document.getElementById('payment-cash');
+            const cashDetails = document.getElementById('cash-details');
+            const pixDetails = document.getElementById('pix-details');
+
+            // Reset styles
+            [pixEl, cashEl].forEach(el => {
+                el.querySelector('.border-2').classList.remove('border-green-500');
+                el.querySelector('.border-2').classList.add('border-gray-300');
+                el.querySelector('.bg-green-500').classList.add('hidden');
+            });
+            
+            // Hide all details sections
+            cashDetails.classList.add('hidden');
+            pixDetails.classList.add('hidden');
+            
+            if (method === 'pix') {
+                pixEl.querySelector('.border-2').classList.add('border-green-500');
+                pixEl.querySelector('.bg-green-500').classList.remove('hidden');
+                pixDetails.classList.remove('hidden');
+            } else if (method === 'cash') {
+                cashEl.querySelector('.border-2').classList.add('border-green-500');
+                cashEl.querySelector('.bg-green-500').classList.remove('hidden');
+                cashDetails.classList.remove('hidden');
+            }
+        }
+        
+        function finalizeOrder() {
+            if (!paymentMethod) {
+                alert('Por favor, selecione uma forma de pagamento.');
+                return;
+            }
+
+            let orderText = '*--- NOVO PEDIDO ---*\n\n';
+            orderText += '*Itens:*\n';
+            let subtotal = 0;
+            
+            cart.forEach(item => {
+                const product = products[item.id];
+                orderText += `${item.quantity}x ${product.name} - R$ ${(product.price * item.quantity).toFixed(2).replace('.', ',')}\n`;
+                subtotal += product.price * item.quantity;
+            });
+            
+            let discountAmount = subtotal * discountPercentage;
+            const total = subtotal - discountAmount + FRETE;
+            
+            orderText += `\n*Subtotal:* R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+            if (couponApplied) {
+                orderText += `\n*Cupom (${appliedCouponCode}):* - R$ ${discountAmount.toFixed(2).replace('.', ',')} (${discountPercentage * 100}%)`;
+            }
+            orderText += `\n*Frete:* R$ ${FRETE.toFixed(2).replace('.', ',')}`;
+            orderText += `\n*Total:* R$ ${total.toFixed(2).replace('.', ',')}\n`;
+            
+            orderText += '\n*Pagamento:*\n';
+            if (paymentMethod === 'pix') {
+                orderText += 'PIX (pagamento a ser confirmado)';
+            } else {
+                orderText += 'Dinheiro\n';
+                const changeValue = document.getElementById('change').value;
+                const noChange = document.getElementById('no-change').checked;
+                if (noChange) {
+                    orderText += 'Não precisa de troco.';
+                } else if (changeValue) {
+                    orderText += `Levar troco para R$ ${parseFloat(changeValue).toFixed(2).replace('.', ',')}`;
+                }
+            }
+            
+            const instructions = document.getElementById('instructions').value;
+            if (instructions) {
+                orderText += `\n\n*Instruções:* ${instructions}`;
+            }
+            
+            const encodedText = encodeURIComponent(orderText);
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedText}`, '_blank');
+        }
+        
+        function filterBrand(brand) {
+            const productGrid = document.getElementById('category-products-grid');
+            if (!productGrid) return; 
+            
+            const allProducts = productGrid.querySelectorAll('.product-card');
+
+            allProducts.forEach(productEl => {
+                if (brand === 'all' || productEl.dataset.brand === brand) {
+                    productEl.style.display = 'block';
+                } else {
+                    productEl.style.display = 'none';
+                }
+            });
+
+            const brandButtons = document.querySelectorAll('.brand-button');
+            brandButtons.forEach(button => {
+                button.classList.remove('border-yellow-400', 'border-2');
+                if (button.dataset.brand === brand) {
+                    button.classList.add('border-yellow-400', 'border-2');
+                }
+            });
+        }
+
+        function autoScrollBanner() {
+            const banner = document.getElementById('banner-scroll');
+            if (!banner) return;
+
+            let currentScroll = 0;
+            const scrollAmount = banner.clientWidth;
+            const totalScrollableWidth = banner.scrollWidth;
+
+            setInterval(() => {
+                currentScroll += scrollAmount;
+                
+                if (currentScroll >= totalScrollableWidth) {
+                    currentScroll = 0;
+                }
+                
+                banner.scrollTo({
+                    left: currentScroll,
+                    behavior: 'smooth'
+                });
+            }, 2000);
+        }
+        
+        function handleSearch(query, resultsContainerId, mainContentId, searchContext = 'all') {
+            const resultsContainer = document.getElementById(resultsContainerId);
+            const mainContent = document.getElementById(mainContentId);
+            const searchTerm = query.trim().toLowerCase();
+
+            if (searchTerm.length < 1) {
+                resultsContainer.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+                resultsContainer.innerHTML = '';
+                return;
+            }
+
+            mainContent.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+
+            let productPool = Object.values(products);
+
+            if (searchContext === 'category' && currentCategory) {
+                productPool = productPool.filter(product => product.category === currentCategory);
+            }
+
+            const filteredProducts = productPool.filter(product =>
+                product.name.toLowerCase().includes(searchTerm)
+            );
+
+            if (filteredProducts.length === 0) {
+                resultsContainer.innerHTML = `<p class="text-center text-gray-500 py-10">Nenhum produto encontrado.</p>`;
+                return;
+            }
+
+            resultsContainer.innerHTML = '<div class="grid grid-cols-2 gap-4"></div>';
+            const grid = resultsContainer.querySelector('.grid');
+            grid.innerHTML = ''; // Limpa o grid antes de adicionar novos itens
+
+            filteredProducts.forEach(product => {
+                grid.innerHTML += `
+                     <div onclick="showProduct('${product.id}')" class="cursor-pointer">
+                        <div class="bg-gray-100 rounded-lg p-2 flex items-center justify-center h-32">
+                            <img src="${product.image}" alt="${product.name}" class="max-h-full max-w-full object-contain">
+                        </div>
+                        <p class="font-semibold text-sm mt-2">${product.name}</p>
+                        <p class="font-bold text-gray-800">R$ ${product.price.toFixed(2).replace('.', ',')}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPopularItems();
+            renderCart();
+            autoScrollBanner();
+            
+            const homeSearchInput = document.getElementById('home-search');
+            homeSearchInput.addEventListener('input', () => {
+                handleSearch(homeSearchInput.value, 'home-search-results', 'home-main-content', 'all');
+            });
+
+            const categorySearchInput = document.getElementById('category-search');
+            categorySearchInput.addEventListener('input', () => {
+                handleSearch(categorySearchInput.value, 'category-search-results', 'category-main-content', 'category');
+            });
+        });
+
+    </script>
+</body>
+</html>
+
