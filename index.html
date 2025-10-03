@@ -39,18 +39,41 @@
 </head>
 <body class="bg-gray-100">
 
+    <!-- TELA DE CARREGAMENTO -->
+    <div id="loading-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-cover bg-center" style="background-image: url('https://img.elo7.com.br/product/zoom/3EC265E/papel-de-parede-bebida-cerveja-chopp-pub-bar-beer-a710-adesivo-lanche.jpg?_gl=1*1jhtwfm*_gcl_au*MTM5NjMxMzkxNC4xNzU5NTA0ODU3*_ga*MTc2NTY4NzM5NS4xNzU5NTA0ODU2*_ga_22YVRK2WCW*czE3NTk1MDQ4NTYkbzEkZzAkdDE3NTk1MDQ4NTYkajYwJGwwJGg1MjQzMDE5MTA.');">
+        <img src="https://lh3.googleusercontent.com/d/1Bd6zbe9qkNdLE-lSJkmdIwX5GZ6eKim0" alt="Logo da Empresa" class="w-24 h-24 animate-pulse">
+    </div>
+
+    <!-- TELA DE DETALHES DO USUÁRIO (MODAL) -->
+    <div id="user-details-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-40" style="display: none;">
+        <div class="bg-white rounded-lg p-6 w-11/12 max-w-sm">
+            <h2 class="text-xl font-bold mb-4">Informações para Entrega</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="customer-name" class="block text-sm font-medium text-gray-700">Seu Nome</label>
+                    <input type="text" id="customer-name" class="w-full mt-1 border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Digite seu nome completo">
+                </div>
+                <div>
+                    <label for="customer-address" class="block text-sm font-medium text-gray-700">Endereço de Entrega</label>
+                    <input type="text" id="customer-address" class="w-full mt-1 border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Rua, Número, Bairro, Cidade">
+                </div>
+            </div>
+            <button onclick="saveUserDetails()" class="w-full bg-yellow-400 text-black font-bold py-3 rounded-lg mt-6">CONFIRMAR ENDEREÇO</button>
+        </div>
+    </div>
+
     <div id="app-container" class="max-w-md mx-auto bg-white min-h-screen shadow-lg">
 
         <!-- TELA INICIAL -->
         <div id="home-screen" class="screen active">
             <header class="p-4 bg-black text-white">
-                <div class="flex items-center">
-                    <div class="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center font-bold text-black text-2xl mr-3">
-                        B
+                <div class="flex items-center cursor-pointer" onclick="openUserDetailsModal()">
+                    <div class="w-10 h-10 rounded-full mr-3 flex-shrink-0 overflow-hidden bg-gray-200">
+                        <img src="https://lh3.googleusercontent.com/d/1Bd6zbe9qkNdLE-lSJkmdIwX5GZ6eKim0" alt="Logo da Empresa" class="w-full h-full object-cover">
                     </div>
-                    <div>
-                        <p class="text-xs text-gray-400"> Seja bem vindo . </p>
-                        <p class="font-semibold"> Yoshi's Beer. Tudo que você precisa em poucos cliks.</p>
+                    <div id="header-address-container" class="truncate">
+                        <p class="text-xs text-gray-400">Receber agora em</p>
+                        <p class="font-semibold truncate">Clique para definir seu endereço</p>
                     </div>
                 </div>
                 <div class="mt-4 relative">
@@ -63,11 +86,14 @@
                 <main class="p-4">
                     <!-- Banner -->
                     <div id="banner-scroll" class="overflow-x-auto snap-x flex space-x-4 no-scrollbar">
-                        <div class="flex-shrink-0 w-full rounded-lg snap-center">
+                        <div class="flex-shrink-0 w-full rounded-lg snap-center cursor-pointer" onclick="showProduct('itaipava-350ml')">
                             <img src="https://cervejaitaipava.com.br/wp-content/uploads/2024/06/CERVE2145-PG008_ITAIPAVA_KV_PROMO_TAMPINHA_FAMILIA_ITAIPAVA_HORIZONTAL_RGB_NOVA-2048x1152.jpg" alt="Banner de promoção" class="w-full h-auto object-cover rounded-lg">
                         </div>
-                        <div class="flex-shrink-0 w-full rounded-lg snap-center">
+                        <div class="flex-shrink-0 w-full rounded-lg snap-center cursor-pointer" onclick="showProduct('casillero-diablo')">
                             <img src="https://content.paodeacucar.com/wp-content/uploads/2018/03/21_VINHOS_LIQUIDA_SDC_tv_flash_15.jpg" alt="Banner de vinhos" class="w-full h-auto object-cover rounded-lg">
+                        </div>
+                        <div class="flex-shrink-0 w-full rounded-lg snap-center cursor-pointer" onclick="showProduct('espetos')">
+                            <img src="https://lh3.googleusercontent.com/d/1O6frYBqL3cJNPheqfZRHSnnr0zQl9pg9" alt="Banner de espetos" class="w-full h-auto object-cover rounded-lg">
                         </div>
                     </div>
 
@@ -130,11 +156,8 @@
         
         <!-- TELA DE PRODUTO -->
         <div id="product-screen" class="screen">
-             <header class="p-4 border-b flex items-center justify-between sticky top-0 bg-white z-10">
-                <button onclick="goBack()"><i class="fa fa-arrow-left text-xl"></i></button>
-                <div class="text-blue-500 font-semibold">
-                    <i class="fa fa-snowflake"></i> GELADA
-                </div>
+             <header id="product-screen-header" class="p-4 border-b flex items-center justify-between sticky top-0 bg-white z-10">
+                <!-- Conteúdo do header gerado por JS -->
             </header>
             <main class="p-4" id="product-details">
                 <!-- Detalhes do produto serão inseridos aqui -->
@@ -180,7 +203,7 @@
                     </div>
                     <div>
                         <label for="instructions" class="font-semibold text-sm">Instruções para o distribuidor?</label>
-                        <textarea id="instructions" rows="3" placeholder="Ex: Se possível, entregar buds em temperatura ambiente. O interfone está quebrado, favor ligar quando chegar." class="w-full mt-1 border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"></textarea>
+                        <textarea id="instructions" rows="3" placeholder="Ex: Se possível, entregar em temperatura ambiente. O interfone está quebrado, favor ligar quando chegar, casa dos fundos e etc." class="w-full mt-1 border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"></textarea>
                     </div>
                 </div>
 
@@ -245,7 +268,7 @@
                     <div class="bg-gray-100 p-4 rounded-lg text-center">
                         <p class="font-semibold">Pague com PIX</p>
                         <p class="text-sm mt-2"><strong>Chave PIX (CNPJ):</strong><br> 00.123.456/0001-00</p>
-                        <p class="text-sm mt-1"><strong>Nome:</strong> Distribuidora de Bebidas LTDA</p>
+                        <p class="text-sm mt-1"><strong>Nome:</strong> YOSHI'S Beer Distribuidora de Bebidas LTDA</p>
                         <p class="text-sm mt-1"><strong>Banco:</strong> Banco Exemplo S.A.</p>
                     </div>
                     <p class="text-center text-sm font-semibold text-red-600 mt-3">Apos o pagamento do pix clicar em finalizar a compra.</p>
@@ -264,8 +287,8 @@
                 </div>
 
                 <div class="bg-gray-100 p-3 rounded-lg mt-6">
-                    <p class="font-bold text-sm">Por precaução:</p>
-                    <p class="text-sm text-gray-600 mt-1">Evite o pagamento com dinheiro em espécie. Tenha o troco para você e para o entregador.</p>
+                    <p class="font-bold text-sm">Atenção:</p>
+                    <p class="text-sm text-gray-600 mt-1"> Após clicar em 'FINALISAR COMPRA', Você será redirecionado para o WhatsApp. CONFIRME O ENVIO para gerar o pedido. Pagamentos via PIX, enviar também o comprovante .</p>
                 </div>
             </main>
             <footer class="p-4 border-t sticky bottom-0 bg-white">
@@ -281,11 +304,14 @@
             'stella-350ml': { id: 'stella-350ml', name: 'Stella Artois 350ml', price: 4.19, image: 'https://io.convertiez.com.br/m/superpaguemenos/shop/products/images/37597/large/cerveja-stella-artois-premium-lager-350ml_87345.png', category: 'cervejas', brand: 'Stella Artois' },
             'stella-pack-24': { id: 'stella-pack-24', name: 'Stella Artois 350ml - Pack de 24', price: 95.53, image: 'https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fproduc_variant%2F00016732_f3a25215-7938-4287-96a0-33848d5f029d.jpg%3Fauto%3Dcompress%2Cformat%26fit%3Dmax%26w%3D540%26h%3D540%26dpr%3D2&w=1920&q=75', category: 'cervejas', brand: 'Stella Artois' },
             'heineken-longneck': { id: 'heineken-longneck', name: 'Heineken 330ml Long Neck', price: 5.49, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/192280291/78936683_1_2_1200_72_RGB.png.png?v=638832650739330000', category: 'cervejas', brand: 'Heineken' },
-            'brahma-350ml': { id: 'brahma-350ml', name: 'Brahma Duplo Malte 350ml', price: 3.29, image: 'https://io.convertiez.com.br/m/superpaguemenos/shop/products/images/21304/large/cerveja-brahma-duplo-malte-lata-350ml_15379.png', category: 'cervejas', brand: 'Brahma' },
-            'skol-350ml': { id: 'skol-350ml', name: 'Skol Pilsen 350ml', price: 2.99, image: 'https://io.convertiez.com.br/m/superpaguemenos/shop/products/images/21319/large/cerveja-skol-pilsen-lata-350ml_15392.png', category: 'cervejas', brand: 'Skol' },
-            'antarctica-350ml': { id: 'antarctica-350ml', name: 'Antarctica Pilsen 350ml', price: 2.99, image: 'https://static.paodeacucar.com/img/uploads/1/657/24362657.png', category: 'cervejas', brand: 'Antarctica' },
-            'corona-330ml': { id: 'corona-330ml', name: 'Corona Extra 330ml', price: 6.49, image: 'https://static.paodeacucar.com/img/uploads/1/789/24364789.png', category: 'cervejas', brand: 'Corona' },
-            'bohemia-350ml': { id: 'bohemia-350ml', name: 'Bohemia Pilsen 350ml', price: 3.49, image: 'https://static.clubeextra.com.br/img/uploads/1/336/23533336.png', category: 'cervejas', brand: 'Bohemia' },
+            'brahma-350ml': { id: 'brahma-350ml', name: 'Brahma Duplo Malte 350ml', price: 3.29, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/106444563/cerveja-brahma-duplo-malte-puro-malte-350ml-lata-1.jpg?v=638144901422700000', category: 'cervejas', brand: 'Brahma' },
+            'skol-350ml': { id: 'skol-350ml', name: 'Skol Pilsen 350ml', price: 2.99, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/107629977/cerveja-skol-pilsen-lata-350ml-1.jpg?v=638155200023370000', category: 'cervejas', brand: 'Skol' },
+            'antarctica-350ml': { id: 'antarctica-350ml', name: 'Antarctica Pilsen 350ml', price: 2.99, image: 'https://www.bernardaoemcasa.com.br/media/catalog/product/cache/1/image/500x500/9df78eab33525d08d6e5fb8d27136e95/1/_/1_20.jpg', category: 'cervejas', brand: 'Antarctica' },
+            'corona-330ml': { id: 'corona-330ml', name: 'Corona Extra 330ml', price: 6.49, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/106441678/cerveja-corona-extra-pilsen-330ml-long-neck-1.jpg?v=638144894496830000', category: 'cervejas', brand: 'Corona' },
+            'bohemia-350ml': { id: 'bohemia-350ml', name: 'Bohemia Pilsen 350ml', price: 3.49, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/213185/1343033_1.jpg?v=637272516559770000', category: 'cervejas', brand: 'Bohemia' },
+            'original-350ml': { id: 'original-350ml', name: 'Original Pilsen 350ml', price: 3.19, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/216090/5699193_1.jpg?v=637272522280770000', category: 'cervejas', brand: 'Original' },
+            'budweiser-330ml': { id: 'budweiser-330ml', name: 'Budweiser 330ml', price: 4.79, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/134558686/cerveja-budweiser-american-lager-330ml-long-neck-1.jpg?v=638364442432970000', category: 'cervejas', brand: 'Budweiser' },
+            'itaipava-350ml': { id: 'itaipava-350ml', name: 'Itaipava Pilsen 350ml', price: 2.89, image: 'https://www.imigrantesbebidas.com.br/img/bebida/images/products/full/183-cerveja-itaipava-pilsen-lata-350ml.20250131122342.jpg?s=094a305259666bb6b1ef6bcc3bc3a420', category: 'cervejas', brand: 'Itaipava' },
             // Destilados
             'jack-daniels': { id: 'jack-daniels', name: 'Whisky Jack Daniel\'s 1L', price: 139.90, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/194169484/186368_1.jpg?v=638894060439630000', category: 'destilados', brand: 'Jack Daniel\'s' },
             'absolut-vodka': { id: 'absolut-vodka', name: 'Vodka Absolut 750ml', price: 79.90, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/181409148/vodka-absolut---750-ml-1.jpg?v=638695236921630000', category: 'destilados', brand: 'Absolut' },
@@ -297,7 +323,10 @@
             // Lojinha
             'carvao-5kg': { id: 'carvao-5kg', name: 'Carvão 5kg', price: 22.00, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/82786581/carvao-perola-negra-briquete-25-kg-1.jpg?v=638018887415400000', category: 'lojinha', brand: 'Genérico' },
             // Comidinhas
-            'doritos-140g': { id: 'doritos-140g', name: 'Doritos Queijo Nacho 140g', price: 10.99, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/193842562/salgadinho-queijo-nacho-doritos-120g-1.jpg?v=638876002921530000', category: 'comidinhas', brand: 'Doritos' }
+            'doritos-140g': { id: 'doritos-140g', name: 'Doritos Queijo Nacho 140g', price: 10.99, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/193842562/salgadinho-queijo-nacho-doritos-120g-1.jpg', category: 'comidinhas', brand: 'Doritos' },
+            'torcida-100g': { id: 'torcida-100g', name: 'Salgadinho de Trigo Pimenta Mexicana Torcida 100g', price: 3.99, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/193862242/salgadinho-de-trigo-pimenta-mexicana-torcida-100g-1.jpg', category: 'comidinhas', brand: 'Torcida' },
+            'espetos': { id: 'espetos', name: 'Espetos de frango e carne', price: 8.00, image: 'https://lh3.googleusercontent.com/d/1YXV6ya4oxT6Np0t4mgmtK57TtKJZJRz_', category: 'comidinhas', brand: 'Espetos' }
+
         };
 
         // --- GERENCIE SEUS CUPONS AQUI ---
@@ -315,8 +344,37 @@
         let discountPercentage = 0;
         let appliedCouponCode = '';
         let currentCategory = null;
+        let customerName = '';
+        let customerAddress = '';
         const FRETE = 1.00;
         const WHATSAPP_NUMBER = '5543984399533'; // <-- SUBSTITUA PELO NÚMERO DO FORNECEDOR
+
+        function saveUserDetails() {
+            const nameInput = document.getElementById('customer-name');
+            const addressInput = document.getElementById('customer-address');
+
+            if (nameInput.value.trim() === '' || addressInput.value.trim() === '') {
+                alert('Por favor, preencha seu nome e endereço.');
+                return;
+            }
+
+            customerName = nameInput.value.trim();
+            customerAddress = addressInput.value.trim();
+
+            const addressHeaderContainer = document.getElementById('header-address-container');
+            if (addressHeaderContainer) {
+                addressHeaderContainer.innerHTML = `
+                    <p class="text-xs text-gray-400">Receber agora em</p>
+                    <p class="font-semibold truncate">${customerAddress} <i class="fa fa-pen-to-square text-xs ml-1"></i></p>
+                `;
+            }
+
+            document.getElementById('user-details-modal').style.display = 'none';
+        }
+
+        function openUserDetailsModal() {
+            document.getElementById('user-details-modal').style.display = 'flex';
+        }
 
         function navigateTo(screenId) {
             // Reset search states when navigating
@@ -379,18 +437,18 @@
             if (category === 'cervejas') {
                 contentHTML += `
                      <h3 class="font-bold text-gray-500 text-sm mb-3">AS CONSAGRADAS</h3>
-                     <div class="grid grid-cols-3 gap-4 mb-8">
-                        <div onclick="filterBrand('Brahma')" data-brand="Brahma" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fbrahma-2.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75" class="max-h-12 object-contain" alt="Brahma"></div>
-                        <div onclick="filterBrand('Skol')" data-brand="Skol" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fskol-min.jpg%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2&w=256&q=75" class="max-h-16 object-contain" alt="Skol"></div>
-                        <div onclick="filterBrand('Antarctica')" data-brand="Antarctica" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fantarctica.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75" class="max-h-12 object-contain" alt="Antarctica"></div>
-                        <div onclick="filterBrand('Original')" data-brand="Original" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Foriginal.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75" class="max-h-12 object-contain" alt="Original"></div>
+                     <div class="flex overflow-x-auto gap-3 mb-8 no-scrollbar pb-2">
+                        <div onclick="filterBrand('Brahma')" data-brand="Brahma" class="brand-button border rounded-lg flex-shrink-0 w-28 h-20 cursor-pointer transition-all bg-center bg-cover" style="background-image: url('https://wallpapers.com/images/high/brahma-chopp-pilsen-beer-logo-design-9m27u042asejco10.webp')"></div>
+                        <div onclick="filterBrand('Skol')" data-brand="Skol" class="brand-button border rounded-lg flex-shrink-0 w-28 h-20 cursor-pointer transition-all bg-center bg-cover" style="background-image: url('https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fskol-min.jpg%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2&w=256&q=75')"></div>
+                        <div onclick="filterBrand('Antarctica')" data-brand="Antarctica" class="brand-button border rounded-lg flex-shrink-0 w-28 h-20 cursor-pointer transition-all bg-center bg-cover" style="background-image: url('https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fantarctica.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75')"></div>
+                        <div onclick="filterBrand('Original')" data-brand="Original" class="brand-button border rounded-lg flex-shrink-0 w-28 h-20 cursor-pointer transition-all bg-center bg-cover" style="background-image: url('https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Foriginal.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75')"></div>
                      </div>
                      <h3 class="font-bold text-gray-500 text-sm mb-3">AS PRESTIGIADAS</h3>
-                     <div class="grid grid-cols-3 gap-4 mb-8">
-                        <div onclick="filterBrand('Stella Artois')" data-brand="Stella Artois" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fstella-artois-2.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75" class="max-h-16 object-contain" alt="Stella Artois"></div>
-                        <div onclick="filterBrand('Bohemia')" data-brand="Bohemia" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fbecks.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75" class="max-h-10 object-contain" alt="Bohemia"></div>
-                        <div onclick="filterBrand('Corona')" data-brand="Corona" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fcorona-wsl.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75" class="max-h-12 object-contain" alt="Corona"></div>
-                        <div onclick="filterBrand('Corona')" data-brand="Corona" class="brand-button border rounded-lg p-2 flex justify-center items-center h-20 cursor-pointer transition-all"><img src="https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fbudweiser2.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75" class="max-h-12 object-contain" alt="Corona"></div>
+                     <div class="flex overflow-x-auto gap-3 mb-8 no-scrollbar pb-2">
+                        <div onclick="filterBrand('Stella Artois')" data-brand="Stella Artois" class="brand-button border rounded-lg flex-shrink-0 w-28 h-20 cursor-pointer transition-all bg-center bg-cover" style="background-image: url('https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fstella-artois-2.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75')"></div>
+                        <div onclick="filterBrand('Bohemia')" data-brand="Bohemia" class="brand-button border rounded-lg flex-shrink-0 w-28 h-20 cursor-pointer transition-all bg-center bg-cover" style="background-image: url('https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fbecks.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75')"></div>
+                        <div onclick="filterBrand('Corona')" data-brand="Corona" class="brand-button border rounded-lg flex-shrink-0 w-28 h-20 cursor-pointer transition-all bg-center bg-cover" style="background-image: url('https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fcorona-wsl.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75')"></div>
+                        <div onclick="filterBrand('Budweiser')" data-brand="Budweiser" class="brand-button border rounded-lg flex-shrink-0 w-28 h-20 cursor-pointer transition-all bg-center bg-cover" style="background-image: url('https://www.ze.delivery/_next/image?url=https%3A%2F%2Fcourier-images-prod.imgix.net%2Fbrand%2Fbudweiser2.png%3Fauto%3Dcompress%2Cformat%26fit%3Dcrop%26w%3D178%26h%3D112%26dpr%3D2%26fm%3Dpng&w=256&q=75')"></div>
                      </div>
                      <h3 onclick="filterBrand('all')" class="font-bold text-gray-500 text-sm mb-3 cursor-pointer hover:text-yellow-500 transition-all">TODAS AS CERVEJAS <i class="fa fa-sync-alt ml-1"></i></h3>
                 `;
@@ -422,9 +480,26 @@
         
         function showProduct(productId) {
             const product = products[productId];
+            if (!product) {
+                console.error("Product not found:", productId);
+                return;
+            }
+            const headerContainer = document.getElementById('product-screen-header');
             const detailsContainer = document.getElementById('product-details');
             const footerContainer = document.getElementById('product-footer');
             
+            let headerHTML = `<button onclick="goBack()"><i class="fa fa-arrow-left text-xl"></i></button>`;
+            if (product.category !== 'lojinha' && product.category !== 'comidinhas') {
+                headerHTML += `
+                    <div class="text-blue-500 font-semibold">
+                        <i class="fa fa-snowflake"></i> GELADA
+                    </div>
+                `;
+            } else {
+                headerHTML += `<div></div>`; // Mantém o botão de voltar à esquerda
+            }
+            headerContainer.innerHTML = headerHTML;
+
             detailsContainer.innerHTML = `
                 <div class="flex justify-center mb-4">
                     <img src="${product.image}" alt="${product.name}" class="w-48 h-48 object-contain">
@@ -642,12 +717,22 @@
         }
         
         function finalizeOrder() {
+            if (customerName === '' || customerAddress === '') {
+                alert('Por favor, defina seu nome e endereço antes de finalizar o pedido.');
+                openUserDetailsModal();
+                return;
+            }
+
             if (!paymentMethod) {
                 alert('Por favor, selecione uma forma de pagamento.');
                 return;
             }
 
             let orderText = '*--- NOVO PEDIDO ---*\n\n';
+
+            orderText += `*Cliente:* ${customerName}\n`;
+            orderText += `*Endereço:* ${customerAddress}\n\n`;
+
             orderText += '*Itens:*\n';
             let subtotal = 0;
             
@@ -784,6 +869,19 @@
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
+             // Esconde a tela de carregamento e mostra o modal de detalhes do usuário após 3 segundos
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loading-screen');
+                if (loadingScreen) {
+                    loadingScreen.style.display = 'none';
+                }
+
+                // Se o nome ou endereço não estiverem definidos, mostra o modal
+                if (!customerName && !customerAddress) {
+                    openUserDetailsModal();
+                }
+            }, 3000);
+            
             renderPopularItems();
             renderCart();
             autoScrollBanner();
