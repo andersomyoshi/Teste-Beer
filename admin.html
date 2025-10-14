@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Yoshi's Bar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style> .modal { display: none; } .modal.flex { display: flex; } </style>
+</head>
+<body class="bg-gray-100">
+
+    <div id="login-screen" class="min-h-screen flex items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-md w-96">
+            <h2 class="text-2xl font-bold mb-6 text-center">Login do Administrador</h2>
+            <div class="mb-4">
+                <label for="login-user" class="block text-gray-700">Usuário</label>
+                <input type="text" id="login-user" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            </div>
+            <div class="mb-6">
+                <label for="login-password" class="block text-gray-700">Senha</label>
+                <input type="password" id="login-password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            </div>
+            <button id="login-button" class="w-full bg-yellow-400 text-black font-bold py-2 px-4 rounded-lg">Entrar</button>
+            <p id="login-error" class="text-red-500 text-center mt-4"></p>
+        </div>
+    </div>
+
+    <div id="admin-panel" class="hidden">
+        <header class="bg-black text-white p-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold">Painel de Controle - Yoshi's Bar</h1>
+            <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Sair</button>
+        </header>
+        <main class="p-6">
+            <div class="mb-6 flex space-x-4">
+                <button id="add-product-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg">Adicionar Novo Produto</button>
+                <button id="backup-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Fazer Backup (JSON)</button>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold mb-4">Lista de Produtos</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-gray-200"><th class="p-3">Nome</th><th class="p-3">Preço</th><th class="p-3">Estoque</th><th class="p-3">Categoria</th><th class="p-3">Ações</th></tr>
+                        </thead>
+                        <tbody id="products-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="product-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <h2 id="modal-title" class="text-2xl font-bold mb-6">Adicionar Produto</h2>
+            <form id="product-form" class="space-y-4">
+                <input type="hidden" id="product-id">
+                <div><label for="product-name" class="block">Nome do Produto</label><input type="text" id="product-name" class="w-full p-2 border rounded" required></div>
+                <div><label for="product-image" class="block">URL da Imagem</label><input type="url" id="product-image" class="w-full p-2 border rounded" required></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label for="product-price" class="block">Valor (Ex: 4.99)</label><input type="number" step="0.01" id="product-price" class="w-full p-2 border rounded" required></div>
+                    <div><label for="product-stock" class="block">Quantidade em Estoque</label><input type="number" id="product-stock" class="w-full p-2 border rounded" required></div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                     <div><label for="product-category" class="block">Categoria</label><select id="product-category" class="w-full p-2 border rounded" required><option value="cervejas">Cervejas</option><option value="destilados">Destilados</option><option value="vinhos">Vinhos</option><option value="sem-alcool">Sem Álcool</option><option value="lojinha">Lojinha</option><option value="comidinhas">Comidinhas</option></select></div>
+                    <div><label for="product-brand" class="block">Marca</label><input type="text" id="product-brand" class="w-full p-2 border rounded" placeholder="Ex: Brahma, Coca-Cola"></div>
+                </div>
+                <div><label for="product-barcode" class="block">Código de Barras</label><input type="text" id="product-barcode" class="w-full p-2 border rounded"></div>
+                <fieldset class="border p-4 rounded">
+                    <legend class="font-semibold px-2">Exibir na Página Inicial</legend>
+                    <div class="space-y-2">
+                        <div class="flex items-center"><input type="checkbox" id="is-popular" class="mr-2 h-4 w-4"><label for="is-popular">Populares</label></div>
+                        <div class="flex items-center"><input type="checkbox" id="is-consagrada" class="mr-2 h-4 w-4"><label for="is-consagrada">As Consagradas (Cervejas)</label></div>
+                        <div class="flex items-center"><input type="checkbox" id="is-prestigiada" class="mr-2 h-4 w-4"><label for="is-prestigiada">As Prestigiadas (Cervejas)</label></div>
+                    </div>
+                </fieldset>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" id="cancel-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
+                    <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded-lg">Salvar Produto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+</html>
