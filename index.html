@@ -52,10 +52,7 @@
             <div id="home-search-results" class="hidden p-4"></div>
         </div>
         <div id="category-screen" class="screen">
-            <header class="p-4 border-b flex items-center sticky top-0 bg-white z-20">
-                <button onclick="window.goBack()" class="mr-4"><i class="fa fa-arrow-left text-xl"></i></button>
-                <div class="relative flex-1"><i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i><input id="category-search" type="text" placeholder="Pesquise na categoria" class="w-full bg-gray-100 border border-gray-300 rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-yellow-400"></div>
-            </header>
+            <header class="p-4 border-b flex items-center sticky top-0 bg-white z-20"><button onclick="window.goBack()" class="mr-4"><i class="fa fa-arrow-left text-xl"></i></button><div class="relative flex-1"><i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i><input id="category-search" type="text" placeholder="Pesquise na categoria" class="w-full bg-gray-100 border border-gray-300 rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-yellow-400"></div></header>
             <div id="category-content-wrapper"><div id="category-main-content"></div><div id="category-search-results" class="hidden p-4"></div></div>
         </div>
         <div id="product-screen" class="screen">
@@ -63,25 +60,44 @@
             <main class="p-4" id="product-details"></main>
         </div>
         <div id="cart-screen" class="screen">
-            <header class="p-4 border-b flex items-center sticky top-0 bg-white">
-                <button onclick="window.goBack()"><i class="fa fa-arrow-left text-xl"></i></button>
-                <h2 class="font-bold text-lg mx-auto">SACOLA</h2>
-                <button onclick="window.clearCart()"><i class="fa fa-trash-alt text-xl text-red-500"></i></button>
-            </header>
+            <header class="p-4 border-b flex items-center sticky top-0 bg-white z-10"><button onclick="window.goBack()"><i class="fa fa-arrow-left text-xl"></i></button><h2 class="font-bold text-lg mx-auto">SACOLA</h2><button onclick="window.clearCart()"><i class="fa fa-trash-alt text-xl text-red-500"></i></button></header>
             <main class="p-4 pb-48">
                 <div id="cart-items" class="space-y-4"></div>
                 <div id="empty-cart-message" class="hidden text-center py-16"><i class="fa fa-shopping-basket text-5xl text-gray-300 mb-4"></i><p class="text-gray-500">Sua sacola está vazia.</p></div>
-                <div class="mt-6 space-y-3"><button onclick="window.navigateTo('home-screen')" class="w-full text-left p-3 rounded-lg border flex justify-between items-center"><span>Adicionar mais produtos</span><i class="fa fa-plus"></i></button></div>
+                <div class="mt-6 space-y-3">
+                    <button onclick="window.navigateTo('home-screen')" class="w-full text-left p-3 rounded-lg border flex justify-between items-center"><span>Adicionar mais produtos</span><i class="fa fa-plus"></i></button>
+                    <div id="coupon-area">
+                        <button id="show-coupon-btn" onclick="window.showCouponInput()" class="w-full text-left p-3 rounded-lg border flex justify-between items-center"><span>Adicionar cupom de desconto</span><i class="fa fa-tag"></i></button>
+                        <div id="coupon-input-container" class="hidden mt-2 flex gap-2"><input type="text" id="coupon-input" placeholder="Digite o código do cupom" class="flex-grow w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 uppercase"><button onclick="window.applyCoupon()" class="bg-gray-800 text-white font-semibold px-4 rounded-lg">Aplicar</button></div>
+                        <div id="applied-coupon-info" class="hidden mt-2 text-left p-3 rounded-lg border bg-green-50 border-green-200 flex justify-between items-center"></div>
+                    </div>
+                    <div><label for="instructions" class="font-semibold text-sm">Instruções para o distribuidor?</label><textarea id="instructions" rows="3" placeholder="Ex: Se possível, entregar em temperatura ambiente. O interfone está quebrado, favor ligar quando chegar, casa dos fundos e etc." class="w-full mt-1 border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"></textarea></div>
+                </div>
             </main>
             <footer class="p-4 border-t fixed bottom-0 bg-white w-full max-w-md mx-auto">
                 <div id="cart-summary" class="hidden">
                     <div class="flex justify-between text-gray-600"><span id="cart-summary-quantity"></span><span id="cart-summary-subtotal"></span></div>
+                    <div id="discount-summary" class="hidden justify-between text-green-600 font-semibold"><span>Desconto</span><span id="discount-amount"></span></div>
                     <div class="flex justify-between text-gray-600"><span>Frete</span><span id="frete-value"></span></div>
                     <div class="flex justify-between font-bold text-lg mt-2"><span>Total a pagar</span><span id="cart-summary-total"></span></div>
-                    <button onclick="window.finalizeOrder()" class="w-full bg-yellow-400 text-black font-bold py-3 rounded-lg mt-4">FINALIZAR PEDIDO</button>
+                    <button onclick="window.navigateTo('payment-screen')" class="w-full bg-yellow-400 text-black font-bold py-3 rounded-lg mt-4">SELECIONAR FORMA DE PAGAMENTO</button>
                 </div>
                 <div class="text-center text-xs text-gray-500 mt-2"><p>Venda proibida para menores de 18 anos.</p></div>
             </footer>
+        </div>
+        <div id="payment-screen" class="screen">
+            <header class="p-4 border-b flex items-center sticky top-0 bg-white z-10"><button onclick="window.goBack()"><i class="fa fa-arrow-left text-xl"></i></button><h2 class="font-bold text-lg mx-auto">FORMA DE PAGAMENTO</h2><div class="w-6"></div></header>
+            <main class="p-4">
+                <h3 class="font-bold text-gray-500 text-sm mb-3">PAGAMENTO NA ENTREGA</h3>
+                <div class="space-y-3">
+                    <div class="border rounded-lg p-3 flex justify-between items-center cursor-pointer" id="payment-pix" onclick="window.selectPayment('pix')"><div><i class="fa-brands fa-pix mr-2"></i><span>PIX</span></div><div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center"><div class="w-3 h-3 rounded-full bg-yellow-400 hidden"></div></div></div>
+                    <div class="border rounded-lg p-3 flex justify-between items-center cursor-pointer" id="payment-cash" onclick="window.selectPayment('cash')"><div><i class="fa fa-money-bill-wave mr-2"></i><span>Dinheiro</span></div><div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center"><div class="w-3 h-3 rounded-full bg-yellow-400 hidden"></div></div></div>
+                </div>
+                <div id="pix-details" class="mt-4 hidden"><div class="bg-gray-100 p-4 rounded-lg text-center"><p class="font-semibold">Pague com PIX</p><p class="text-sm mt-2"><strong>Chave PIX (CNPJ):</strong><br> 00.123.456/0001-00</p><p class="text-sm mt-1"><strong>Nome:</strong> YOSHI'S Beer Distribuidora de Bebidas LTDA</p><p class="text-sm mt-1"><strong>Banco:</strong> Banco Exemplo S.A.</p></div><p class="text-center text-sm font-semibold text-red-600 mt-3">Apos o pagamento do pix clicar em finalizar a compra.</p></div>
+                <div id="cash-details" class="mt-4 hidden"><p class="font-semibold">Valor do seu pedido: <span id="payment-total"></span></p><div class="mt-2"><label for="change" class="block text-sm text-gray-700">Precisa de troco para quanto?</label><input type="number" id="change" class="w-full mt-1 border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Ex: 50,00"></div><div class="mt-3 flex items-center"><input type="checkbox" id="no-change" class="h-4 w-4 rounded border-gray-300 text-yellow-400 focus:ring-yellow-400"><label for="no-change" class="ml-2 block text-sm text-gray-900">Não preciso de troco</label></div></div>
+                <div class="bg-gray-100 p-3 rounded-lg mt-6"><p class="font-bold text-sm">Atenção:</p><p class="text-sm text-gray-600 mt-1"> Após clicar em 'FINALISAR COMPRA', Você será redirecionado para o WhatsApp. CONFIRME O ENVIO para gerar o pedido. Pagamentos via PIX, enviar também o comprovante .</p></div>
+            </main>
+            <footer class="p-4 border-t sticky bottom-0 bg-white"><button onclick="window.finalizeOrder()" class="w-full bg-yellow-400 text-black font-bold py-3 rounded-lg">FINALIZAR COMPRA</button></footer>
         </div>
     </div>
     <script type="module" src="app.js"></script>
