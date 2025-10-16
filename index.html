@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yoshi's Beer - Delivery</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -16,7 +16,7 @@
         .brand-button.selected { border-color: #FBBF24; border-width: 2px; }
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-white">
 
     <div id="loading-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900">
         <i class="fas fa-spinner fa-spin text-white text-5xl"></i>
@@ -24,11 +24,41 @@
 
     <div id="app-container" class="max-w-md mx-auto bg-white min-h-screen shadow-lg hidden">
         <div id="home-screen" class="screen active">
+             <header class="p-4 bg-black text-white">
+                <div class="flex items-center cursor-pointer" onclick="openUserDetailsModal()">
+                    <div class="w-10 h-10 rounded-full mr-3 flex-shrink-0 overflow-hidden bg-gray-200">
+                        <img src="https://i.ibb.co/6yT3227/logo-yoshi.png" alt="Logo da Empresa" class="w-full h-full object-cover">
+                    </div>
+                    <div id="header-address-container" class="truncate">
+                        <p class="text-xs text-gray-400">Receber agora em</p>
+                        <p class="font-semibold truncate">Clique para definir seu endereço</p>
+                    </div>
+                </div>
+                <div class="mt-4 relative">
+                    <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input id="home-search" type="text" placeholder="Pesquise sua bebida favorita" class="w-full bg-gray-800 border border-gray-700 rounded-lg py-2 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                </div>
+            </header>
+            <div id="home-main-content">
+                <main class="p-4">
+                    <div id="banner-scroll" class="overflow-x-auto snap-x flex space-x-4 no-scrollbar"></div>
+                    <div class="grid grid-cols-2 gap-3 mt-6">
+                        <button onclick="showCategory('cervejas')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left"><i class="fa fa-beer-mug-empty text-xl text-gray-600 mr-3"></i><span class="font-semibold">Cervejas</span></button>
+                        <button onclick="showCategory('destilados')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left"><i class="fa fa-martini-glass-citrus text-xl text-gray-600 mr-3"></i><span class="font-semibold">Destilados</span></button>
+                        <button onclick="showCategory('vinhos')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left"><i class="fa fa-wine-glass text-xl text-gray-600 mr-3"></i><span class="font-semibold">Vinhos</span></button>
+                        <button onclick="showCategory('sem-alcool')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left"><i class="fa fa-bottle-droplet text-xl text-gray-600 mr-3"></i><span class="font-semibold">Sem Álcool</span></button>
+                        <button onclick="showCategory('lojinha')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left"><i class="fa fa-store text-xl text-gray-600 mr-3"></i><span class="font-semibold">Lojinha</span></button>
+                        <button onclick="showCategory('comidinhas')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left"><i class="fa fa-utensils text-xl text-gray-600 mr-3"></i><span class="font-semibold">Comidinhas</span></button>
+                    </div>
+                    <section class="mt-8">
+                        <h2 class="font-bold text-lg">Populares</h2>
+                        <div id="popular-items" class="flex overflow-x-auto gap-4 mt-4 no-scrollbar pb-2"></div>
+                    </section>
+                </main>
             </div>
+        </div>
         
-        <div id="category-screen" class="screen">
-            </div>
-
+        <div id="category-screen" class="screen"></div>
         <div id="product-screen" class="screen"></div>
         <div id="cart-screen" class="screen"></div>
         <div id="payment-screen" class="screen"></div>
@@ -54,24 +84,25 @@
     <script>
         let allProducts = [];
         let navigationStack = ['home-screen'];
-        // ... (outras variáveis globais como cart, etc.)
+        // Defina aqui outras variáveis globais que seu app usa (carrinho, etc)
 
         window.loadDataFromFirebase = async function(collection, getDocs, db) {
             try {
                 const snapshot = await getDocs(collection(db, 'products'));
                 allProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                // Aqui você renderizaria a página inicial (código omitido para focar na mudança)
-                // renderHomePage(); 
+                renderHomePage(); // Renderiza os banners e populares na pág. inicial
                 document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('app-container').classList.remove('hidden');
             } catch (error) {
                 console.error("Erro ao carregar do Firebase: ", error);
+                document.getElementById('loading-screen').innerHTML = '<p class="text-white">Erro ao carregar a loja.</p>';
             }
         };
         
         function navigateTo(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
+            const targetScreen = document.getElementById(screenId);
+            if(targetScreen) targetScreen.classList.add('active');
             if (navigationStack[navigationStack.length - 1] !== screenId) {
                 navigationStack.push(screenId);
             }
@@ -81,23 +112,43 @@
         function goBack() {
             if (navigationStack.length > 1) {
                 navigationStack.pop();
-                navigateTo(navigationStack[navigationStack.length - 1]);
-                navigationStack.pop(); // Remove a duplicata
+                const lastScreen = navigationStack[navigationStack.length - 1];
+                navigateTo(lastScreen);
+                // A linha abaixo é intencional para corrigir o comportamento de voltar
+                if (navigationStack.length > 1) navigationStack.pop();
+            }
+        }
+
+        function renderHomePage() {
+            const popularContainer = document.getElementById('popular-items');
+            const popularProducts = allProducts.filter(p => p.isPopular);
+            if(popularProducts.length > 0) {
+                 popularContainer.innerHTML = popularProducts.map(p => `
+                 <div class="text-center w-28 flex-shrink-0 cursor-pointer" onclick="showProduct('${p.id}')">
+                    <img src="${p.image}" alt="${p.name}" class="w-full h-24 object-contain rounded-lg bg-gray-100 p-2">
+                    <p class="text-xs font-semibold mt-2 truncate">${p.name}</p>
+                    <p class="text-sm font-bold">R$ ${p.price.toFixed(2).replace('.', ',')}</p>
+                </div>`).join('');
+            } else {
+                popularContainer.innerHTML = `<p class="text-sm text-gray-500">Nenhum item popular no momento.</p>`;
             }
         }
 
         function showCategory(category) {
             const container = document.getElementById('category-screen');
             const categoryProducts = allProducts.filter(p => p.category === category);
-            const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
+            const categoryName = category.charAt(0).toUpperCase() + category.slice(1).replace('-', ' ');
+
             let contentHTML = `
                 <header class="p-4 border-b flex items-center sticky top-0 bg-white z-20">
                     <button onclick="goBack()" class="mr-4"><i class="fa fa-arrow-left text-xl"></i></button>
-                    <h2 class="font-bold text-lg">${categoryName}</h2>
+                    <div class="relative flex-1">
+                        <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input oninput="searchInCategory(this.value)" type="text" placeholder="Pesquise em ${categoryName}" class="w-full bg-gray-100 border border-gray-300 rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                    </div>
                 </header>
                 <main class="p-4">`;
             
-            // LÓGICA PARA OBTER MARCAS ÚNICAS E SEUS LOGOS
             const brands = new Map();
             categoryProducts.forEach(p => {
                 if (p.brand && p.brandLogoUrl && !brands.has(p.brand)) {
@@ -109,33 +160,31 @@
                 }
             });
 
-            // LAYOUT ESPECIAL PARA CERVEJAS
             if (category === 'cervejas') {
                 const consagradasHTML = Array.from(brands).filter(([_, data]) => data.isConsagrada).map(([name, data]) => `
-                    <div class="brand-button flex-shrink-0 w-28 h-20 rounded-lg cursor-pointer bg-white border flex items-center justify-center p-2" onclick="filterBrand('${name}', this)">
+                    <div class="brand-button flex-shrink-0 w-28 h-20 rounded-lg cursor-pointer bg-white border flex items-center justify-center p-2 transition-all" onclick="filterBrand('${name}', this)">
                         <img src="${data.logo}" alt="${name}" class="max-h-full max-w-full object-contain">
                     </div>`).join('');
                 
                 const prestigiadasHTML = Array.from(brands).filter(([_, data]) => data.isPrestigiada).map(([name, data]) => `
-                    <div class="brand-button flex-shrink-0 w-28 h-20 rounded-lg cursor-pointer bg-gray-800 border-2 border-gray-800 flex items-center justify-center p-2" onclick="filterBrand('${name}', this)">
-                        <img src="${data.logo}" alt="${name}" class="max-h-full max-w-full object-contain">
+                    <div class="brand-button flex-shrink-0 w-28 h-20 rounded-lg cursor-pointer bg-gray-800 border-2 border-transparent flex items-center justify-center p-2 transition-all" onclick="filterBrand('${name}', this)">
+                        <img src="${data.logo}" alt="${name}" class="max-h-full max-w-full object-contain" style="filter: brightness(0) invert(1);">
                     </div>`).join('');
 
                 if(consagradasHTML) contentHTML += `<h3 class="font-bold text-gray-500 text-sm mb-3">AS CONSAGRADAS</h3><div class="flex overflow-x-auto gap-3 pb-4 no-scrollbar">${consagradasHTML}</div>`;
                 if(prestigiadasHTML) contentHTML += `<h3 class="font-bold text-gray-500 text-sm mb-3 mt-4">AS PRESTIGIADAS</h3><div class="flex overflow-x-auto gap-3 pb-4 no-scrollbar">${prestigiadasHTML}</div>`;
                 contentHTML += `<h3 class="font-bold text-gray-800 text-md mt-6 mb-3 cursor-pointer" onclick="filterBrand('all', this)">TODAS AS CERVEJAS <i class="fa fa-sync-alt ml-1 text-sm"></i></h3>`;
             
-            } else if (brands.size > 0) { // LAYOUT PARA OUTRAS CATEGORIAS
-                const brandsHTML = Array.from(brands).map(([name, data]) => `
-                     <div class="brand-button flex-shrink-0 h-12 px-4 rounded-full cursor-pointer bg-gray-200 border flex items-center justify-center" onclick="filterBrand('${name}', this)">
-                        <span class="font-semibold text-sm">${name}</span>
+            } else if (brands.size > 0) {
+                 const brandsHTML = Array.from(brands).map(([name, data]) => `
+                     <div class="brand-button flex-shrink-0 h-10 px-4 rounded-full cursor-pointer bg-gray-100 border-2 border-transparent flex items-center justify-center transition-all" onclick="filterBrand('${name}', this)">
+                        <span class="font-semibold text-sm text-gray-700">${name}</span>
                     </div>`).join('');
-                contentHTML += `<div class="flex overflow-x-auto gap-3 pb-4 no-scrollbar">${brandsHTML}</div>`;
+                contentHTML += `<div class="flex overflow-x-auto gap-3 py-2 -mx-4 px-4 no-scrollbar">${brandsHTML}</div>`;
             }
             
-            // GRID DE PRODUTOS (COMUM A TODAS AS CATEGORIAS)
             const productsHTML = categoryProducts.map(p => `
-                <div class="product-card cursor-pointer" data-brand="${p.brand}" onclick="showProduct('${p.id}')">
+                <div class="product-card cursor-pointer" data-brand="${p.brand}" onclick="alert('Função de abrir produto não implementada.')">
                     <div class="bg-gray-100 rounded-lg flex items-center justify-center h-40 p-2">
                         <img src="${p.image}" alt="${p.name}" class="max-h-full max-w-full object-contain">
                     </div>
@@ -158,20 +207,21 @@
             }
 
             productGrid.querySelectorAll('.product-card').forEach(card => {
-                if (brand === 'all' || card.dataset.brand === brand) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
+                card.style.display = (brand === 'all' || card.dataset.brand === brand) ? 'block' : 'none';
             });
         }
         
-        // CÓDIGO PLACEHOLDER: Adicione o restante das suas funções aqui
-        // (showProduct, addToCart, renderCart, etc.) para a loja funcionar completamente.
-        // O código delas não precisa mudar, apenas precisa estar aqui.
-        function showProduct(productId) {
-            console.log("Abrindo produto:", productId);
-            // Implemente a lógica para mostrar a tela do produto aqui.
+        function searchInCategory(term) {
+             const productGrid = document.getElementById('category-products-grid');
+             if (!productGrid) return;
+             const searchTerm = term.toLowerCase();
+             
+             document.querySelectorAll('.brand-button').forEach(btn => btn.classList.remove('selected'));
+
+             productGrid.querySelectorAll('.product-card').forEach(card => {
+                const productName = card.querySelector('p').textContent.toLowerCase();
+                card.style.display = productName.includes(searchTerm) ? 'block' : 'none';
+            });
         }
 
     </script>
