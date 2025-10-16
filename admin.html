@@ -55,9 +55,7 @@
                 </div>
 
                 <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-                    <div class="px-6 py-4">
-                        <h2 class="text-xl font-bold">Lista de Produtos</h2>
-                    </div>
+                    <div class="px-6 py-4"><h2 class="text-xl font-bold">Lista de Produtos</h2></div>
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead class="bg-gray-200">
@@ -69,26 +67,18 @@
                                     <th class="text-left py-3 px-4 font-semibold text-sm">Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="product-list-body">
-                                <tr><td colspan="5" class="text-center py-10">Carregando produtos...</td></tr>
-                            </tbody>
+                            <tbody id="product-list-body"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </main>
-
-        <footer class="bg-black mt-10">
-            <p class="text-center text-white py-4">By: An.Yoshi</p>
-        </footer>
+        <footer class="bg-black mt-10"><p class="text-center text-white py-4">By: An.Yoshi</p></footer>
     </div>
-
 
     <div id="product-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-full overflow-y-auto">
-            <div class="p-6 border-b">
-                <h3 class="text-xl font-bold" id="modal-title">Adicionar Novo Produto</h3>
-            </div>
+            <div class="p-6 border-b"><h3 class="text-xl font-bold" id="modal-title">Adicionar Novo Produto</h3></div>
             <form id="product-form" class="p-6 space-y-4">
                 <input type="hidden" id="product-id">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -97,8 +87,16 @@
                         <input type="text" id="product-name" class="w-full mt-1 border rounded-lg p-2">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium">URL da Imagem</label>
+                        <label class="block text-sm font-medium">URL da Imagem do Produto</label>
                         <input type="text" id="product-image" class="w-full mt-1 border rounded-lg p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Marca</label>
+                        <input type="text" id="product-brand" class="w-full mt-1 border rounded-lg p-2" placeholder="Ex: Brahma, Coca-Cola">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">URL do Logo da Marca (quadrado)</label>
+                        <input type="text" id="product-brand-logo" class="w-full mt-1 border rounded-lg p-2" placeholder="Link para imagem do logo">
                     </div>
                     <div>
                         <label class="block text-sm font-medium">Valor Venda (Ex: 13.99)</label>
@@ -120,35 +118,29 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium">Marca</label>
-                        <input type="text" id="product-brand" class="w-full mt-1 border rounded-lg p-2" placeholder="Ex: Brahma, Coca-Cola">
-                    </div>
-                    <div>
                         <label class="block text-sm font-medium">Valor Compra (Ex: 8.50)</label>
                         <input type="number" id="product-cost" step="0.01" class="w-full mt-1 border rounded-lg p-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium">Código de Barras</label>
-                        <input type="text" id="product-barcode" class="w-full mt-1 border rounded-lg p-2">
                     </div>
                 </div>
 
                 <div class="border-t pt-4">
-                     <h4 class="font-semibold mb-2">Exibir na Página Inicial</h4>
+                     <h4 class="font-semibold mb-2">Opções de Exibição</h4>
                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-2">
-                             <div class="flex items-center"><input type="checkbox" id="product-isPopular" class="h-4 w-4 mr-2"><label for="product-isPopular">Populares</label></div>
-                             <div class="flex items-center"><input type="checkbox" id="product-isConsagrada" class="h-4 w-4 mr-2"><label for="product-isConsagrada">As Consagradas (Cervejas)</label></div>
-                             <div class="flex items-center"><input type="checkbox" id="product-isPrestigiada" class="h-4 w-4 mr-2"><label for="product-isPrestigiada">As Prestigiadas (Cervejas)</label></div>
+                             <p class="font-medium text-sm">Exibir em:</p>
+                             <div class="flex items-center"><input type="checkbox" id="product-isPopular" class="h-4 w-4 mr-2"><label for="product-isPopular">Populares (Página Inicial)</label></div>
+                             <div class="flex items-center"><input type="checkbox" id="product-isConsagrada" class="h-4 w-4 mr-2"><label for="product-isConsagrada">Como "Consagrada" (Cervejas)</label></div>
+                             <div class="flex items-center"><input type="checkbox" id="product-isPrestigiada" class="h-4 w-4 mr-2"><label for="product-isPrestigiada">Como "Prestigiada" (Cervejas)</label></div>
                          </div>
                          <div class="space-y-2">
+                            <p class="font-medium text-sm">Promoção:</p>
                             <div class="flex items-center">
                                 <input type="checkbox" id="product-isPromotion" class="h-4 w-4 mr-2">
-                                <label for="product-isPromotion">É uma Promoção? (Banner na Inicial)</label>
+                                <label for="product-isPromotion">É Promoção? (Banner na Inicial)</label>
                             </div>
                             <div id="promotion-url-container" class="hidden">
                                 <label class="block text-sm font-medium">URL da Imagem do Banner</label>
-                                <input type="text" id="product-promotion-banner" class="w-full mt-1 border rounded-lg p-2" placeholder="Cole a URL da imagem grande aqui">
+                                <input type="text" id="product-promotion-banner" class="w-full mt-1 border rounded-lg p-2">
                             </div>
                          </div>
                      </div>
@@ -164,7 +156,6 @@
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
       import { getFirestore, collection, getDocs, addDoc, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
       const firebaseConfig = {
         apiKey: "AIzaSyDESJdxOC4v29_9AUMdwKhH_qV9eJiDoRE",
         authDomain: "yoshisbar-253e1.firebaseapp.com",
@@ -174,210 +165,118 @@
         appId: "1:737401455071:web:78c8663a69d79ea725c46a",
         measurementId: "G-PYWXBT90LX"
       };
-
-      // Inicializa o Firebase
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
-      
-      // Disponibiliza as funções do Firestore globalmente para os scripts inline
-      window.db = {
-          collection: (path) => collection(db, path),
-          getDocs: getDocs,
-          addDoc: addDoc,
-          doc: (path, id) => doc(db, path, id),
-          setDoc: setDoc,
-          deleteDoc: deleteDoc
-      };
+      window.db = { collection: (path) => collection(db, path), getDocs, addDoc, doc: (path, id) => doc(db, path, id), setDoc, deleteDoc };
     </script>
     
     <script>
-        let allProducts = []; // Cache local para busca
-
-        // --- LÓGICA DE LOGIN ---
+        let allProducts = [];
         function handleLogin() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-            const errorEl = document.getElementById('login-error');
-            
-            if (user === 'yoshi' && pass === 'a1985') {
+            if (document.getElementById('username').value === 'yoshi' && document.getElementById('password').value === 'a1985') {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('admin-panel').style.display = 'block';
                 sessionStorage.setItem('loggedIn', 'true');
                 loadProducts();
-            } else {
-                errorEl.textContent = 'Login ou senha incorretos.';
-            }
+            } else { document.getElementById('login-error').textContent = 'Login ou senha incorretos.'; }
         }
-
-        function handleLogout() {
-            sessionStorage.removeItem('loggedIn');
-            location.reload();
-        }
-
-        // --- LÓGICA DO MODAL ---
+        function handleLogout() { sessionStorage.removeItem('loggedIn'); location.reload(); }
         function openModal(modalId) {
-            document.getElementById('product-id').value = ''; 
             document.getElementById('product-form').reset();
+            document.getElementById('product-id').value = '';
             document.getElementById('modal-title').textContent = 'Adicionar Novo Produto';
-            
             const promoCheckbox = document.getElementById('product-isPromotion');
-            const bannerUrlContainer = document.getElementById('promotion-url-container');
-            promoCheckbox.onchange = () => {
-                bannerUrlContainer.style.display = promoCheckbox.checked ? 'block' : 'none';
-            };
+            promoCheckbox.onchange = () => { document.getElementById('promotion-url-container').style.display = promoCheckbox.checked ? 'block' : 'none'; };
             promoCheckbox.dispatchEvent(new Event('change'));
-            
             document.getElementById(modalId).classList.add('active');
         }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        // --- LÓGICA DE PRODUTOS (CRUD) ---
+        function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
         async function saveProduct() {
             const productId = document.getElementById('product-id').value;
             const productData = {
                 name: document.getElementById('product-name').value,
                 image: document.getElementById('product-image').value,
+                brand: document.getElementById('product-brand').value,
+                brandLogoUrl: document.getElementById('product-brand-logo').value, // NOVO CAMPO
                 price: parseFloat(document.getElementById('product-price').value) || 0,
                 stock: parseInt(document.getElementById('product-stock').value) || 0,
                 category: document.getElementById('product-category').value,
-                brand: document.getElementById('product-brand').value,
                 cost: parseFloat(document.getElementById('product-cost').value) || 0,
-                barcode: document.getElementById('product-barcode').value,
                 isPopular: document.getElementById('product-isPopular').checked,
                 isConsagrada: document.getElementById('product-isConsagrada').checked,
                 isPrestigiada: document.getElementById('product-isPrestigiada').checked,
                 isPromotion: document.getElementById('product-isPromotion').checked,
                 promotionBanner: document.getElementById('product-promotion-banner').value,
             };
-
-            if (!productData.name || !productData.price) {
-                alert('Nome do produto e Preço são obrigatórios.');
-                return;
-            }
-
+            if (!productData.name || !productData.price) { alert('Nome do produto e Preço são obrigatórios.'); return; }
             try {
                 if (productId) {
                     await window.db.setDoc(window.db.doc('products', productId), productData, { merge: true });
-                    alert('Produto atualizado com sucesso!');
                 } else {
                     await window.db.addDoc(window.db.collection('products'), productData);
-                    alert('Produto adicionado com sucesso!');
                 }
+                alert('Produto salvo com sucesso!');
                 closeModal('product-modal');
                 loadProducts();
-            } catch (error) {
-                console.error("Erro ao salvar produto: ", error);
-                alert('Ocorreu um erro ao salvar o produto.');
-            }
+            } catch (error) { console.error("Erro ao salvar produto: ", error); alert('Ocorreu um erro.'); }
         }
-
         async function loadProducts() {
             const tableBody = document.getElementById('product-list-body');
-            tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-10">Carregando produtos...</td></tr>';
-            
+            tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-10">Carregando...</td></tr>';
             try {
-                const productsCollection = window.db.collection('products');
-                const snapshot = await window.db.getDocs(productsCollection);
+                const snapshot = await window.db.getDocs(window.db.collection('products'));
                 allProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderProducts(allProducts);
-            } catch (error) {
-                console.error("Erro ao carregar produtos: ", error);
-                tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-10 text-red-500">Erro ao carregar produtos.</td></tr>';
-            }
+            } catch (error) { console.error("Erro ao carregar: ", error); tableBody.innerHTML = '<tr><td colspan="5" class="text-red-500 text-center py-10">Erro ao carregar.</td></tr>'; }
         }
-        
         function renderProducts(productsToRender) {
              const tableBody = document.getElementById('product-list-body');
-             if (productsToRender.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-10">Nenhum produto encontrado.</td></tr>';
-                return;
-            }
-
-            tableBody.innerHTML = productsToRender.map(product => `
-                <tr class="border-b">
-                    <td class="py-3 px-4">${product.name}</td>
-                    <td class="py-3 px-4">R$ ${product.price.toFixed(2).replace('.', ',')}</td>
-                    <td class="py-3 px-4">${product.stock}</td>
-                    <td class="py-3 px-4">${product.category}</td>
-                    <td class="py-3 px-4">
-                        <button onclick="editProduct('${product.id}')" class="bg-blue-500 text-white px-3 py-1 rounded-md text-sm mr-2">Editar</button>
-                        <button onclick="deleteProduct('${product.id}')" class="bg-red-500 text-white px-3 py-1 rounded-md text-sm">Excluir</button>
-                    </td>
-                </tr>
-            `).join('');
+             if (productsToRender.length === 0) { tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-10">Nenhum produto encontrado.</td></tr>'; return; }
+             tableBody.innerHTML = productsToRender.map(p => `<tr class="border-b"><td class="py-3 px-4">${p.name}</td><td class="py-3 px-4">R$ ${p.price.toFixed(2).replace('.',',')}</td><td class="py-3 px-4">${p.stock}</td><td class="py-3 px-4">${p.category}</td><td class="py-3 px-4"><button onclick="editProduct('${p.id}')" class="bg-blue-500 text-white px-3 py-1 rounded-md text-sm mr-2">Editar</button><button onclick="deleteProduct('${p.id}')" class="bg-red-500 text-white px-3 py-1 rounded-md text-sm">Excluir</button></td></tr>`).join('');
         }
-
         function editProduct(productId) {
             const product = allProducts.find(p => p.id === productId);
             if (!product) return;
-
             openModal('product-modal');
             document.getElementById('modal-title').textContent = 'Editar Produto';
-            
             document.getElementById('product-id').value = product.id;
             document.getElementById('product-name').value = product.name;
             document.getElementById('product-image').value = product.image;
+            document.getElementById('product-brand').value = product.brand;
+            document.getElementById('product-brand-logo').value = product.brandLogoUrl || ''; // NOVO CAMPO
             document.getElementById('product-price').value = product.price;
             document.getElementById('product-stock').value = product.stock;
             document.getElementById('product-category').value = product.category;
-            document.getElementById('product-brand').value = product.brand;
             document.getElementById('product-cost').value = product.cost || '';
-            document.getElementById('product-barcode').value = product.barcode || '';
             document.getElementById('product-isPopular').checked = product.isPopular || false;
             document.getElementById('product-isConsagrada').checked = product.isConsagrada || false;
             document.getElementById('product-isPrestigiada').checked = product.isPrestigiada || false;
             document.getElementById('product-isPromotion').checked = product.isPromotion || false;
             document.getElementById('product-promotion-banner').value = product.promotionBanner || '';
-
             document.getElementById('product-isPromotion').dispatchEvent(new Event('change'));
         }
-
         async function deleteProduct(productId) {
-            if (confirm('Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita.')) {
+            if (confirm('Tem certeza que deseja excluir este produto?')) {
                 try {
                     await window.db.deleteDoc(window.db.doc('products', productId));
-                    alert('Produto excluído com sucesso!');
+                    alert('Produto excluído!');
                     loadProducts();
-                } catch (error) {
-                    console.error("Erro ao excluir produto: ", error);
-                    alert('Ocorreu um erro ao excluir o produto.');
-                }
+                } catch (error) { console.error("Erro ao excluir: ", error); alert('Ocorreu um erro.'); }
             }
         }
-        
         function backupData() {
-            if (allProducts.length === 0) {
-                alert("Não há produtos para fazer backup.");
-                return;
-            }
+            if (allProducts.length === 0) { alert("Não há produtos para backup."); return; }
             const dataStr = JSON.stringify(allProducts, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = `backup_yoshis_bar_${new Date().toISOString().slice(0,10)}.json`;
-            
             const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr));
+            linkElement.setAttribute('download', `backup_yoshis_bar_${new Date().toISOString().slice(0,10)}.json`);
             linkElement.click();
         }
-
         document.addEventListener('DOMContentLoaded', () => {
-            if (sessionStorage.getItem('loggedIn') === 'true') {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'block';
-                loadProducts();
-            }
-            
-            const searchInput = document.getElementById('search-input');
-            searchInput.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                const filteredProducts = allProducts.filter(p => 
-                    p.name.toLowerCase().includes(searchTerm) || 
-                    (p.brand && p.brand.toLowerCase().includes(searchTerm))
-                );
-                renderProducts(filteredProducts);
+            if (sessionStorage.getItem('loggedIn') === 'true') { handleLogin(); }
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                renderProducts(allProducts.filter(p => p.name.toLowerCase().includes(term) || (p.brand && p.brand.toLowerCase().includes(term))));
             });
         });
     </script>
