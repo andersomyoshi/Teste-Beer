@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yoshi's Beer - Delivery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .snap-x { scroll-snap-type: x mandatory; }
+        .snap-center { scroll-snap-align: center; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .out-of-stock-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #333;
+            border-radius: 0.5rem;
+        }
+        .out-of-stock-image {
+            filter: grayscale(100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div id="loading-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-cover bg-center" style="background-image: url('https://img.elo7.com.br/product/zoom/3EC265E/papel-de-parede-bebida-cerveja-chopp-pub-bar-beer-a710-adesivo-lanche.jpg');">
+        <i class="fas fa-spinner fa-spin text-white text-5xl"></i>
+    </div>
+
+    <div id="user-details-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-40" style="display: none;">
+        <div class="bg-white rounded-lg p-6 w-11/12 max-w-sm">
+            <h2 class="text-xl font-bold mb-4">Informações para Entrega</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="customer-name" class="block text-sm font-medium text-gray-700">Seu Nome</label>
+                    <input type="text" id="customer-name" class="w-full mt-1 border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Digite seu nome completo">
+                </div>
+                <div>
+                    <label for="customer-address" class="block text-sm font-medium text-gray-700">Endereço de Entrega</label>
+                    <input type="text" id="customer-address" class="w-full mt-1 border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Rua, Número, Bairro, Cidade">
+                </div>
+            </div>
+            <button onclick="saveUserDetails()" class="w-full bg-yellow-400 text-black font-bold py-3 rounded-lg mt-6">CONFIRMAR ENDEREÇO</button>
+        </div>
+    </div>
+
+    <div id="app-container" class="max-w-md mx-auto bg-white min-h-screen shadow-lg" style="display: none;">
+
+        <div id="home-screen" class="screen active">
+            <header class="p-4 bg-black text-white">
+                <div class="flex items-center cursor-pointer" onclick="openUserDetailsModal()">
+                    <div class="w-10 h-10 rounded-full mr-3 flex-shrink-0 overflow-hidden bg-gray-200">
+                        <img src="https://i.ibb.co/6yT3227/logo-yoshi.png" alt="Logo da Empresa" class="w-full h-full object-cover">
+                    </div>
+                    <div id="header-address-container" class="truncate">
+                        <p class="text-xs text-gray-400">Receber agora em</p>
+                        <p class="font-semibold truncate">Clique para definir seu endereço</p>
+                    </div>
+                </div>
+                <div class="mt-4 relative">
+                    <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input id="home-search" type="text" placeholder="Pesquise sua bebida favorita" class="w-full bg-gray-800 border border-gray-700 rounded-lg py-2 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                </div>
+            </header>
+
+            <div id="home-main-content">
+                <main class="p-4">
+                    <div id="banner-scroll" class="overflow-x-auto snap-x flex space-x-4 no-scrollbar"></div>
+                    <div class="grid grid-cols-2 gap-3 mt-6">
+                        <button onclick="showCategory('cervejas')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left"><i class="fa fa-beer-mug-empty text-xl text-gray-600 mr-3"></i><span class="font-semibold">Cervejas</span></button>
+                        <button onclick="showCategory('destilados')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left"><i class="fa fa-martini-glass-citrus text-xl text-gray-600 mr-3"></i><span class="font-semibold">Destilados</span></button>
+                        <button onclick="showCategory('vinhos')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left"><i class="fa fa-wine-glass text-xl text-gray-600 mr-3"></i><span class="font-semibold">Vinhos</span></button>
+                        <button onclick="showCategory('sem-alcool')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left"><i class="fa fa-bottle-droplet text-xl text-gray-600 mr-3"></i><span class="font-semibold">Sem Álcool</span></button>
+                        <button onclick="showCategory('lojinha')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left"><i class="fa fa-store text-xl text-gray-600 mr-3"></i><span class="font-semibold">Lojinha</span></button>
+                        <button onclick="showCategory('comidinhas')" class="bg-gray-100 p-3 rounded-lg flex items-center text-left"><i class="fa fa-utensils text-xl text-gray-600 mr-3"></i><span class="font-semibold">Comidinhas</span></button>
+                    </div>
+                    <section class="mt-8">
+                        <h2 class="font-bold text-lg">Populares</h2>
+                        <div id="popular-items" class="flex overflow-x-auto gap-4 mt-4 no-scrollbar pb-2"></div>
+                    </section>
+                </main>
+            </div>
+            <div id="home-search-results" class="hidden p-4"></div>
+        </div>
+        
+        <div id="category-screen" class="screen"></div>
+        <div id="product-screen" class="screen"></div>
+        <div id="cart-screen" class="screen"></div>
+        <div id="payment-screen" class="screen"></div>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDESJdxOC4v29_9AUMdwKhH_qV9eJiDoRE",
+        authDomain: "yoshisbar-253e1.firebaseapp.com",
+        projectId: "yoshisbar-253e1",
+        storageBucket: "yoshisbar-253e1.appspot.com",
+        messagingSenderId: "737401455071",
+        appId: "1:737401455071:web:78c8663a69d79ea725c46a",
+        measurementId: "G-PYWXBT90LX"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      
+      // Carrega os dados assim que o Firebase estiver pronto
+      window.loadDataFromFirebase(collection, getDocs, db);
+    </script>
+
+    <script>
+        let allProducts = [];
+        let cart = [];
+        let navigationStack = ['home-screen'];
+        let paymentMethod = null;
+        let couponApplied = false;
+        let discountPercentage = 0;
+        let appliedCouponCode = '';
+        let currentCategory = null;
+        let customerName = '';
+        let customerAddress = '';
+        const FRETE = 1.00;
+        const WHATSAPP_NUMBER = '5543984399533';
+
+        // FUNÇÃO PRINCIPAL PARA CARREGAR OS DADOS
+        window.loadDataFromFirebase = async function(collection, getDocs, db) {
+            try {
+                const productsCollection = collection(db, 'products');
+                const snapshot = await getDocs(productsCollection);
+                allProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                renderHomePage();
+
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
+
+                const userDetails = JSON.parse(localStorage.getItem('userDetails'));
+                if (userDetails && userDetails.name && userDetails.address) {
+                    customerName = userDetails.name;
+                    customerAddress = userDetails.address;
+                    updateHeaderAddress();
+                } else {
+                    openUserDetailsModal();
+                }
+
+            } catch (error) {
+                console.error("Erro ao carregar produtos do Firebase: ", error);
+                document.getElementById('loading-screen').innerHTML = '<p class="text-white text-center">Erro ao carregar a loja.<br>Tente novamente mais tarde.</p>';
+            }
+        }
+        
+        // ... (COLE AQUI TODAS AS SUAS OUTRAS FUNÇÕES: renderHomePage, saveUserDetails, etc.)
+        // O restante do seu código JavaScript do arquivo da loja vem aqui.
+        // As funções de renderização, carrinho, navegação, etc., são as mesmas.
+    </script>
+</body>
+</html>
